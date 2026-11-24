@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rechenwerkstatt – schriftliches Rechnen</title>
+<style>
+:root{--ink:#223349;--muted:#66758b;--accent:#315fba;--pale:#eaf1fc;--bg:#f4f7fb;--line:#dce5f0;--paper:#fff;--green:#187052;--greenbg:#e9f8f0;--red:#a33d43;--redbg:#fff0f0;--note:#b45e13;--sq:34px}
+*{box-sizing:border-box}html{color-scheme:light}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.5}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #7eaaef;outline-offset:2px}
+.app{max-width:1150px;margin:0 auto;padding:26px 22px 65px}.kicker{font-size:11px;font-weight:850;letter-spacing:.16em;color:var(--accent);margin:0 0 5px;text-transform:uppercase}.hero h1{font-size:clamp(27px,4vw,38px);line-height:1.18;letter-spacing:-.035em;margin:0}.subtitle{color:var(--muted);margin:7px 0 22px;font-size:14px}
+.operation-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:18px}.nav-link{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);padding:14px 16px;border:1px solid var(--line);background:#fff;border-radius:15px;box-shadow:0 3px 12px #1b365708;min-width:0}.nav-link:hover{border-color:#97b8e7}.nav-link[aria-current="page"]{border:2px solid var(--accent);background:var(--pale);padding:13px 15px}.nav-symbol{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:10px;background:#f0f4fb;font-size:21px;font-weight:800;color:var(--accent)}.nav-link[aria-current="page"] .nav-symbol{color:white;background:var(--accent)}.nav-name{font-size:14px;font-weight:800;min-width:0}
+.settings{display:flex;flex-direction:column;gap:18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:19px 22px;box-shadow:0 7px 24px #1b365706}.settings-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.label{display:block;color:#52657c;font-size:12px;font-weight:750;margin-bottom:7px}.select,.answer{width:100%;background:white;border:1px solid #cbd6e4;border-radius:10px;padding:10px 13px;min-height:44px;color:var(--ink)}.settings-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:15px;border-top:1px solid var(--line)}.toggle{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--ink)}.toggle input{width:17px;height:17px;accent-color:var(--accent)}.settings-actions{display:flex;gap:9px;flex-wrap:wrap;margin-left:auto}.btn{border-radius:10px;padding:10px 15px;min-height:42px;background:white;border:1px solid #cbd6e4;font-size:13px;font-weight:750;color:var(--ink)}.btn:hover{border-color:var(--accent)}.btn-primary{background:var(--accent);border-color:var(--accent);color:white}.btn-primary:hover{background:#214d9f;color:white}
+.section-heading{margin:30px 2px 14px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}.section-heading h2{font-size:19px;letter-spacing:-.02em;margin:0}.section-heading p{margin:0;color:var(--muted);font-size:12px}.tasks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.tasks[data-operation="div"]{grid-template-columns:1fr}.task{background:#fff;border:1px solid var(--line);border-radius:17px;padding:21px;min-width:0;box-shadow:0 3px 14px #20365106}.task-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.task-top strong{font-size:12px;letter-spacing:.075em;text-transform:uppercase;color:#66758b}.task-top .number{font-size:12px;color:#8898a9;font-weight:700}.expression{font-size:clamp(21px,2.5vw,27px);font-weight:770;letter-spacing:.015em;margin:20px 0 21px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.expression span{color:var(--accent)}.check-row{display:flex;gap:9px;align-items:end;flex-wrap:wrap}.input-wrap{flex:1;min-width:125px}.input-wrap.rest{flex:0 1 120px;min-width:90px}.check-row .btn{flex:none}.answer{font-size:16px;font-variant-numeric:tabular-nums}.feedback{padding:9px 12px;margin-top:12px;border-radius:9px;font-size:13px;font-weight:700}.feedback.correct{background:var(--greenbg);color:var(--green)}.feedback.wrong{background:var(--redbg);color:var(--red)}.solution-button{display:flex;align-items:center;gap:6px;border:0;background:transparent;color:var(--accent);padding:17px 0 0;font-weight:800;font-size:13px}.solution-button:hover{text-decoration:underline}.solution{margin-top:16px;border-top:1px solid var(--line);padding-top:17px}.solution-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;margin-bottom:12px;font-size:13px;font-weight:800}.solution-head span{color:var(--green)}.method{font-size:12px;color:#596a7c;font-weight:670;margin:4px 0 11px}.paper-shell{border:1px solid #d8e2ef;border-radius:12px;background:#f9fbfe;padding:15px 12px;overflow:auto;max-width:100%;scrollbar-width:thin}.paper-grid{width:max-content;background-color:#fff;background-image:linear-gradient(to right,#d4e3f5 1px,transparent 1px),linear-gradient(to bottom,#d4e3f5 1px,transparent 1px);background-size:var(--sq) var(--sq);border-top:1px solid #d4e3f5;border-left:1px solid #d4e3f5;box-shadow:1px 1px 0 #d4e3f5;min-width:calc(var(--columns) * var(--sq))}.math-row{height:var(--sq);display:grid;grid-template-columns:repeat(var(--columns),var(--sq));position:relative}.cell{height:var(--sq);width:var(--sq);display:flex;justify-content:center;align-items:center;position:relative;font-family:"DejaVu Sans Mono","Consolas",monospace;font-weight:740;font-size:19px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums;z-index:1}.cell.operator{font-size:23px;font-weight:500;color:#223349}.cell.result{font-weight:900;color:#136850}.cell.carry{font-size:14px;color:var(--accent);font-weight:850;align-items:center}.cell.correction{font-size:14px;color:var(--note);font-weight:850}.cell.has-strike{text-decoration:line-through;text-decoration-color:#b46b39;text-decoration-thickness:1.5px}.cell.has-edit .original{text-decoration:line-through;text-decoration-thickness:1.5px;text-decoration-color:#b46b39;position:absolute;bottom:2px;line-height:20px}.cell .replacement{position:absolute;top:0;font-size:12px;line-height:12px;color:#ae5917;background:#fffdf7;font-weight:900;padding:0 2px;z-index:2;border-radius:2px}.cell.underline{border-bottom:2px solid #344965}.empty-text{margin:0}.explain-title{font-size:12px;font-weight:850;color:#344965;margin:17px 0 7px}.steps{font-size:13px;color:#506176;margin:0;padding-left:23px}.steps li{margin:6px 0;padding-left:4px}.steps li::marker{color:var(--accent);font-weight:800}.paper-legend{font-size:11px;color:#5f7084;margin:10px 0 0}.paper-legend strong{color:#ae5917}.notes{font-size:12px;color:#69798b;margin-top:22px}.notes a{color:var(--accent)}.hidden{display:none!important}
+@media(max-width:980px){.nav-link{padding:12px}.nav-link[aria-current="page"]{padding:11px}.nav-name{font-size:12px}.task{padding:16px}:root{--sq:30px}.cell{font-size:17px}.cell.operator{font-size:20px}}
+@media(max-width:780px){.app{padding:20px 13px 48px}.tasks{grid-template-columns:1fr}.operation-nav{gap:6px}.nav-link{flex-direction:column;text-align:center;gap:6px}.nav-link[aria-current="page"]{padding:11px}.nav-symbol{height:30px;width:30px}.nav-name{font-size:12px}.section-heading{display:block}.section-heading p{margin-top:4px}}
+@media(max-width:520px){.settings{padding:16px}.settings-grid{grid-template-columns:1fr;gap:10px}.settings-bottom{align-items:stretch}.settings-actions{width:100%;margin:0}.settings-actions .btn{flex:1}.nav-name{font-size:10px}.nav-symbol{height:28px;width:28px;font-size:18px}.nav-link{padding:8px 2px}.nav-link[aria-current="page"]{padding:7px 1px}.task{padding:15px}:root{--sq:28px}.cell{font-size:16px}.cell.operator{font-size:18px}.paper-shell{padding:10px 7px}}
+@media print{body{background:white}.app{max-width:none;padding:0}.operation-nav,.settings,.solution-button,.check-row,.feedback,.notes,.section-heading p{display:none!important}.tasks{grid-template-columns:repeat(2,minmax(0,1fr))!important}.task{box-shadow:none;break-inside:avoid}.expression{margin:14px 0}.solution{break-inside:avoid}.section-heading{margin-top:16px}.paper-shell{overflow:visible}}
+
+/* Ruhige Einzelaufgaben-Ansicht */
+.app{max-width:900px;padding-top:28px}.hero{margin-bottom:18px}.hero h1{font-size:clamp(27px,4vw,34px)}
+.operation-nav{margin-bottom:14px}.settings{gap:12px;padding:16px 19px}.settings-grid{gap:13px}
+.settings-bottom{padding-top:12px}.tasks{display:block!important}.task{padding:26px 29px;max-width:100%}
+.expression{font-size:clamp(24px,3.6vw,31px);line-height:1.65;overflow-wrap:normal;word-break:normal;margin:12px 0 23px}
+.task-top strong{letter-spacing:0;text-transform:none;font-size:14px;color:#506176}
+.solution-head{font-size:15px}.solution{padding-top:18px}.paper-shell{background:#fff;max-width:100%}
+.solution-calc + .solution-calc{margin-top:20px}.calc-label{font-size:13px;font-weight:750;color:#536982;margin:0 0 7px}
+.method-note{margin:16px 0 0;color:#586979;font-size:13px}
+.step-details{margin-top:16px;font-size:13px;color:#506176}.step-details summary{cursor:pointer;color:#315fba;font-weight:700;width:max-content}
+.step-details[open] .steps{margin-top:9px}.solution-button{font-size:14px}
+@media(max-width:780px){.app{padding:15px 13px 40px}.task{padding:20px}.operation-nav{gap:7px}}
+@media(max-width:520px){.settings-grid{grid-template-columns:1fr 1fr;gap:11px}.settings-grid label#terms-area{grid-column:span 2}.task{padding:16px}.expression{font-size:22px;margin-bottom:18px}.check-row .btn{flex:1}.settings-bottom .settings-actions{width:auto;flex:1}.settings-actions .btn{width:100%}.input-wrap{min-width:120px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="hero"><h1 id="title">Schriftliche Addition</h1></header>
+<nav class="operation-nav" id="pages" aria-label="Rechenart wählen">
+<a class="nav-link" href="#addition" data-op="add"><span class="nav-symbol">+</span><span class="nav-name">Addition</span></a>
+<a class="nav-link" href="#subtraktion" data-op="sub"><span class="nav-symbol">−</span><span class="nav-name">Subtraktion</span></a>
+<a class="nav-link" href="#multiplikation" data-op="mul"><span class="nav-symbol">·</span><span class="nav-name">Multiplikation</span></a>
+<a class="nav-link" href="#division" data-op="div"><span class="nav-symbol">:</span><span class="nav-name">Division</span></a>
+</nav>
+<section class="settings" aria-label="Aufgabe einstellen">
+<div class="settings-grid">
+<label><span class="label">Zahlenraum bis</span><select id="maximum" class="select"><option value="1000">1 000</option><option value="10000">10 000</option><option value="100000" selected>100 000</option><option value="1000000">1 000 000</option></select></label>
+<label><span class="label">Schwierigkeit</span><select id="difficulty" class="select"><option value="easy">Leicht</option><option value="medium" selected>Normal</option><option value="hard">Knifflig</option></select></label>
+<label id="terms-area"><span class="label">Anzahl der Zahlen</span><select id="terms" class="select"><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
+</div>
+<div class="settings-bottom"><label id="rest-area" class="toggle hidden"><input id="allow-rest" type="checkbox"> Mit Rest</label><div class="settings-actions"><button class="btn btn-primary" id="regenerate" type="button">↻ Neue Aufgabe</button></div></div>
+</section>
+<section class="tasks" id="tasks" aria-label="Aktuelle Aufgabe"></section>
+</main>
+<script>
+(()=>{'use strict';
+const $=s=>document.querySelector(s),names={add:'Addition',sub:'Subtraktion',mul:'Multiplikation',div:'Division'},symbols={add:'+',sub:'−',mul:'·',div:':'},hashes={addition:'add',subtraktion:'sub',multiplikation:'mul',division:'div'};
+const places=['Einer','Zehner','Hunderter','Tausender','Zehntausender','Hunderttausender','Millionen'];
+const fmt=n=>String(Number(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' '),rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,esc=v=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const state={op:'add',max:100000,difficulty:'medium',terms:2,allowRest:false,tasks:[]};
+const dig=(n,p)=>Math.floor(n/10**p)%10;
+function addDetail(numbers){
+ let n=Math.max(...numbers.map(x=>String(x).length)),carry=0,steps=[],carryAt=[],carries=0;
+ for(let p=0;p<n;p++){
+  const digits=numbers.map(x=>dig(x,p)),sum=digits.reduce((a,b)=>a+b,carry),next=Math.floor(sum/10);
+  carryAt[p]=carry;if(next)carries++;
+  steps.push(`${places[p]||'Stelle'}: ${digits.join(' + ')}${carry?' + '+carry+' (Übertrag)':''} = ${sum}. ${sum%10} schreiben${next?', '+next+' übertragen':''}.`);
+  carry=next;
+ }
+ return {n,carries,carryAt,outerCarry:carry,steps};
+}
+function subDetail(a,b){
+ const n=Math.max(String(a).length,String(b).length);let A=String(a).padStart(n,'0').split('').map(Number),original=A.slice(),B=String(b).padStart(n,'0').split('').map(Number),steps=[],borrows=0;
+ for(let i=n-1;i>=0;i--){let from=-1;if(A[i]<B[i]){from=i-1;while(from>=0&&A[from]===0)from--;if(from<0)throw Error('Ungültige Subtraktion');A[from]--;for(let j=from+1;j<i;j++)A[j]=9;A[i]+=10;borrows++}const extra=from<0?'':' Dafür entbündeln.';steps.push(`${places[n-i-1]||'Stelle'}: ${A[i]} − ${B[i]} = ${A[i]-B[i]}.${extra}`)}
+ return {original,changed:A,borrows,steps,n};
+}
+function multDetail(a,b){let digits=String(b).split('').reverse().map(Number),partials=[],steps=[];digits.forEach((d,i)=>{let factor=d*10**i,p=a*factor;partials.push(p);steps.push(`${fmt(a)} · ${fmt(factor)} = ${fmt(p)}.`)});if(partials.length>1)steps.push(`Teilprodukte addieren: ${partials.map(fmt).join(' + ')} = ${fmt(a*b)}.`);return {partials,steps}}
+function divDetail(a,b){const chars=String(a).split('').map(Number);let remainder=0,started=false,q='',rows=[],steps=[];
+ for(let i=0;i<chars.length;i++){let previous=remainder,part=previous*10+chars[i];if(!started&&part<b){remainder=part;continue}started=true;let digit=Math.floor(part/b),subtract=digit*b;remainder=part-subtract;q+=digit;rows.push({i,part,subtract,remainder,digit,previous});steps.push(`${part} : ${b} = ${digit}, denn ${digit} · ${b} = ${subtract}. Rest: ${remainder}.`)}
+ if(+q!==Math.floor(a/b)||remainder!==a%b)throw Error('Ungültige Division');return {rows,steps,remainder,quotient:+q};
+}
+function randomPartition(total,k,min=10){const result=[];for(let i=0;i<k-1;i++){const max=total-min*(k-i-1);const x=rnd(min,max);result.push(x);total-=x;}result.push(total);return result.sort(()=>Math.random()-.5);}
+function easyAddition(k,max){
+ for(let trial=0;trial<600;trial++){
+  const target=rnd(Math.max(100,Math.floor(max*.32)),Math.floor(max*.95)),numbers=Array(k).fill(0);
+  String(target).split('').reverse().forEach((c,p)=>{
+   let remaining=Number(c);
+   for(let j=0;j<remaining;j++)numbers[rnd(0,k-1)]+=10**p;
+  });
+  if(numbers.every(n=>n>=10))return numbers;
+ }
+ // Sichere, übertragsfreie Reserve.
+ return Array.from({length:k},(_,i)=>10**(i%2+1));
+}
+function easySubtraction(k,max){
+ // Teile die Ziffern des Minuenden auf k Anteile auf.
+ // Damit ist jede anschließende Subtraktion ohne Entbündeln möglich.
+ for(let trial=0;trial<900;trial++){
+  const a=rnd(Math.ceil(max*.55),Math.floor(max*.95)),pieces=Array(k).fill(0);
+  String(a).split('').reverse().forEach((c,p)=>{
+   for(let j=0;j<Number(c);j++)pieces[rnd(0,k-1)]+=10**p;
+  });
+  if(pieces.every(x=>x>=10))return [a,...pieces.slice(0,k-1)];
+ }
+ // Garantiert übertragsfreie Ausnahme für jeden angebotenen Zahlenraum.
+ const place=10**Math.max(1,String(max).length-2);
+ return [place*k,...Array(k-1).fill(place)];
+}
+function generator(type){let best;
+ for(let trial=0;trial<1500;trial++){
+  let a,b,result,remainder=0;
+  if(type==='add'){
+   const numbers=state.difficulty==='easy'?easyAddition(state.terms,state.max):randomPartition(rnd(Math.ceil(state.max*.4),state.max),state.terms);
+   result=numbers.reduce((x,y)=>x+y,0);const count=addDetail(numbers).carries;best={numbers,result};
+   if(state.difficulty==='easy'?count===0:state.difficulty==='medium'?count>=1:count>=2)return best;
+  }else if(type==='sub'){
+   let numbers;
+   if(state.difficulty==='easy')numbers=easySubtraction(state.terms,state.max);
+   else {a=rnd(Math.ceil(state.max*.5),state.max);const spend=rnd(Math.max(11*(state.terms-1),Math.floor(a*.35)),a-10);numbers=[a,...randomPartition(spend,state.terms-1)]}
+   result=numbers.slice(1).reduce((acc,x)=>acc-x,numbers[0]);
+   if(result<0||numbers.some(x=>x<10)||numbers[0]>state.max)continue;
+   let balance=numbers[0],count=0;for(const n of numbers.slice(1)){count+=subDetail(balance,n).borrows;balance-=n}
+   best={numbers,result};if(state.difficulty==='easy'?count===0:state.difficulty==='medium'?count>=1:count>=2)return best;
+  }else if(type==='mul'){
+   let digits=state.difficulty==='easy'?1:state.difficulty==='medium'?2:state.max===1000?2:3,lo=digits===1?2:10**(digits-1),hi=digits===1?9:10**digits-1;hi=Math.min(hi,Math.floor(state.max/10));if(hi<lo)continue;
+   b=rnd(lo,hi);let amax=Math.floor(state.max/b);if(amax<10)continue;a=rnd(Math.max(10,Math.floor(amax*.15)),amax);if(a<b&&Math.random()<.6)[a,b]=[b,a];result=a*b;best={a,b,result};if(result<=state.max)return best;
+  }else{
+   b=state.difficulty==='medium'?(Math.random()<.5?rnd(2,4):rnd(5,9)):rnd(2,9);let qmin=state.max===1000?12:Math.max(12,Math.floor(state.max/(b*8))),qmax=Math.floor(state.max/b);if(qmin>qmax)qmin=2;let q=rnd(qmin,qmax);if(state.difficulty==='easy'&&/0/.test(String(q)))continue;if(state.difficulty==='hard'&&q>=100&&Math.random()<.5&&!/0/.test(String(q)))continue;
+   const maxRest=Math.min(b-1,state.max-b*q);if(state.allowRest&&maxRest<1)continue;remainder=state.allowRest?rnd(1,maxRest):0;a=q*b+remainder;result=q;best={a,b,result,remainder};if(a<=state.max)return best;
+  }
+ }
+ return best||({add:{numbers:[423,312],result:735},sub:{numbers:[900,210],result:690},mul:{a:123,b:4,result:492},div:{a:936,b:4,result:234,remainder:0}}[type]);
+}
+function blank(cols){return Array.from({length:cols},()=>({text:''}))}
+function put(row,at,text,klass=''){for(let j=0;j<String(text).length;j++){const col=at+j;if(col>=0&&col<row.length)row[col]={text:String(text)[j],klass}}}
+function putRight(row,text,ending,klass=''){put(row,ending-String(text).length+1,String(text),klass)}
+function line(row,first,last){for(let i=Math.max(0,first);i<=Math.min(row.length-1,last);i++)row[i]={...row[i],line:true}}
+function htmlGrid(rows,cols){return `<div class="paper-shell"><div class="paper-grid" style="--columns:${cols}" role="img" aria-label="Schriftliche Rechnung auf kariertem Papier">${rows.map(row=>`<div class="math-row">${row.map(cell=>`<div class="cell ${esc(cell.klass||'')} ${cell.struck?'has-strike':''} ${cell.line?'underline':''}">${esc(cell.text||'')}</div>`).join('')}</div>`).join('')}</div></div>`}
+function additionLayout(t){
+ const nums=t.numbers,d=addDetail(nums),width=Math.max(String(t.result).length,...nums.map(x=>String(x).length)),cols=width+1,rows=[];
+ if(d.carries){const row=blank(cols);for(let p=0;p<d.n;p++)if(d.carryAt[p])put(row,cols-1-p,d.carryAt[p],'carry');if(d.outerCarry&&String(t.result).length>d.n)put(row,cols-1-d.n,d.outerCarry,'carry');rows.push(row)}
+ nums.forEach((n,i)=>{let row=blank(cols);if(i>0)put(row,0,'+','operator');putRight(row,n,cols-1);if(i===nums.length-1)line(row,0,cols-1);rows.push(row)});
+ const result=blank(cols);putRight(result,t.result,cols-1,'result');rows.push(result);
+ return htmlGrid(rows,cols)+stepsHtml(d.steps);
+}
+function oneSubtractionGrid(a,b){
+ const result=a-b,d=subDetail(a,b),width=Math.max(String(a).length,String(b).length,String(result).length),cols=width+1,rows=[],top=blank(cols);
+ putRight(top,a,cols-1);
+ if(d.borrows){const correction=blank(cols);for(let i=0;i<d.n;i++){const col=cols-d.n+i,original=d.original[i],updated=d.changed[i];if(original!==updated&&top[col]&&top[col].text!==''){top[col].struck=true;correction[col]={text:String(updated),klass:'correction'}}}rows.push(correction)}
+ rows.push(top);let second=blank(cols);put(second,0,'−','operator');putRight(second,b,cols-1);line(second,0,cols-1);rows.push(second);
+ let answer=blank(cols);putRight(answer,result,cols-1,'result');rows.push(answer);
+ return {grid:htmlGrid(rows,cols),steps:d.steps};
+}
+function subtractionLayout(t){let current=t.numbers[0],results=[],steps=[];
+ for(let i=1;i<t.numbers.length;i++){const b=t.numbers[i],r=oneSubtractionGrid(current,b);results.push(`<div class="solution-calc">${t.numbers.length>2?`<p class="calc-label">${i}. Rechnung</p>`:''}${r.grid}</div>`);steps.push(...r.steps.map(x=>`${i}. Rechnung – ${x}`));current-=b}
+ return results.join('')+stepsHtml(steps);
+}
+function multiplicationLayout(t){const d=multDetail(t.a,t.b),head=`${fmt(t.a)} · ${fmt(t.b)}`,maxDigits=Math.max(String(t.result).length,...d.partials.map(p=>String(p).length)),cols=Math.max(head.length+1,maxDigits+2),rows=[],top=blank(cols);putRight(top,head,cols-1);rows.push(top);
+ d.partials.forEach((p,i)=>{let r=blank(cols);putRight(r,p,cols-1);if(i>0)put(r,Math.max(0,cols-1-String(p).length),'+','operator');if(i===d.partials.length-1)line(r,0,cols-1);rows.push(r)});
+ if(d.partials.length===1)line(rows[0],0,cols-1);let result=blank(cols);putRight(result,t.result,cols-1,'result');rows.push(result);return htmlGrid(rows,cols)+stepsHtml(d.steps);
+}
+function divisionLayout(t){const d=divDetail(t.a,t.b),head=`${fmt(t.a)} : ${t.b} = ${fmt(d.quotient)}${d.remainder?' R '+d.remainder:''}`,cols=Math.max(head.length+2,String(t.a).length+5),rows=[];let top=blank(cols);put(top,1,head);rows.push(top);
+ d.rows.forEach((r,index)=>{const end=1+r.i,partlen=String(r.part).length;if(index>0){let current=blank(cols);putRight(current,r.part,end);rows.push(current)}let sub=blank(cols);putRight(sub,r.subtract,end);const start=end-String(r.subtract).length+1;put(sub,Math.max(0,start-1),'−','operator');line(sub,Math.max(0,end-Math.max(partlen,String(r.subtract).length)),end);rows.push(sub)});
+ const end=String(t.a).length;let rest=blank(cols);put(rest,end,String(d.remainder),'result');rows.push(rest);return htmlGrid(rows,cols)+stepsHtml(d.steps);
+}
+function stepsHtml(steps){return `<details class="step-details"><summary>Rechenschritte erklären</summary><ol class="steps">${steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></details>`}
+function solution(t){let body=state.op==='add'?additionLayout(t):state.op==='sub'?subtractionLayout(t):state.op==='mul'?multiplicationLayout(t):divisionLayout(t);
+ const hint=state.op==='sub'?'Bei der Subtraktion sind auch andere Rechenwege und Schreibweisen richtig.':'Dein Rechenweg darf etwas anders aussehen und trotzdem richtig sein.';
+ return `<div class="solution"><div class="solution-head">Lösung <span>${fmt(t.result)}${state.op==='div'&&t.remainder?' Rest '+t.remainder:''}</span></div>${body}<p class="method-note">${hint}</p></div>`;
+}
+function taskHtml(t){const div=state.op==='div',nums=t.numbers,expr=nums?nums.map(fmt).join(` ${symbols[state.op]} `):`${fmt(t.a)} ${symbols[state.op]} ${fmt(t.b)}`;
+ return `<article class="task"><div class="task-top"><strong>Deine Aufgabe</strong></div><div class="expression">${esc(expr)} <span>= ?</span></div><div class="check-row"><label class="input-wrap"><span class="label">Dein Ergebnis</span><input class="answer" type="text" inputmode="numeric" data-field="answer" value="${esc(t.answer)}" placeholder="Ergebnis" aria-label="Dein Ergebnis"></label>${div&&state.allowRest?`<label class="input-wrap rest"><span class="label">Rest</span><input class="answer" type="text" inputmode="numeric" data-field="restAnswer" value="${esc(t.restAnswer)}" placeholder="0" aria-label="Rest"></label>`:''}<button class="btn" type="button" data-action="check">Prüfen</button></div>${t.feedback?`<p class="feedback ${t.feedback}" role="status">${t.feedback==='correct'?'✓ Richtig!':'Prüfe deine Rechnung noch einmal.'}</p>`:''}<button type="button" class="solution-button" data-action="toggle" aria-expanded="${t.show}">${t.show?'▴ Lösung verbergen':'▾ Lösung zeigen'}</button>${t.show?solution(t):''}</article>`;
+}
+function render(){const target=$('#tasks');target.dataset.operation=state.op;target.innerHTML=state.tasks.map(taskHtml).join('')}
+function generate(){state.max=Number($('#maximum').value);state.difficulty=$('#difficulty').value;state.terms=Number($('#terms').value);state.allowRest=$('#allow-rest').checked;state.tasks=[{...generator(state.op),answer:'',restAnswer:'',show:false,feedback:null}];render()}
+function changePage(){state.op=hashes[decodeURIComponent(location.hash.slice(1))]||'add';$('#title').textContent='Schriftliche '+names[state.op];$('#rest-area').classList.toggle('hidden',state.op!=='div');$('#terms-area').classList.toggle('hidden',!['add','sub'].includes(state.op));document.querySelectorAll('.nav-link').forEach(el=>{if(el.dataset.op===state.op)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current')});generate()}
+function parseValue(s){let v=String(s||'').trim().replace(/[.\s\u00a0]/g,'');return /^\d+$/.test(v)?Number(v):NaN}
+$('#pages').addEventListener('click',e=>{const a=e.target.closest('a[data-op]');if(a&&a.getAttribute('href')===location.hash)changePage()});window.addEventListener('hashchange',changePage);
+$('#regenerate').addEventListener('click',generate);
+['maximum','difficulty','terms','allow-rest'].forEach(id=>$('#'+id).addEventListener('change',generate));
+$('#tasks').addEventListener('input',e=>{let el=e.target.closest('[data-field]');if(!el)return;let t=state.tasks[0];t[el.dataset.field]=el.value;if(t.feedback){t.feedback=null;const status=el.closest('.task').querySelector('.feedback');if(status)status.remove()}});
+$('#tasks').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input.answer')){e.preventDefault();$('#tasks [data-action="check"]').click()}});
+$('#tasks').addEventListener('click',e=>{let btn=e.target.closest('button[data-action]');if(!btn)return;let t=state.tasks[0];if(btn.dataset.action==='toggle')t.show=!t.show;else{let value=parseValue(t.answer),remainder=String(t.restAnswer).trim()===''?0:parseValue(t.restAnswer);t.feedback=Number.isFinite(value)&&value===t.result&&(!('remainder' in t)||Number.isFinite(remainder)&&remainder===t.remainder)?'correct':'wrong'}render()});
+window.__rechenwerkstatt={addDetail,subDetail,multDetail,divDetail,additionLayout,subtractionLayout,multiplicationLayout,divisionLayout,generator,get state(){return state}};
+changePage();
+})();
+</script>
+</body>
+</html>
