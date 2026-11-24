@@ -473,7 +473,8 @@ function addDetail(numbers){
  for(let p=0;p<n;p++){
   const digits=numbers.map(x=>dig(x,p)),sum=digits.reduce((a,b)=>a+b,carry),next=Math.floor(sum/10);
   carryAt[p]=carry;if(next)carries++;
-  steps.push(`${places[p]||'Stelle'}: ${digits.join(' + ')}${carry?' + '+carry+' (Übertrag)':''} = ${sum}. ${sum%10} schreiben${next?', '+next+' übertragen':''}.`);
+  const shown=digits.filter((_,i)=>String(numbers[i]).length>p),place=places[p]||'Stelle';
+  steps.push(shown.length===1&&!carry?`${place}: Hier steht nur die ${shown[0]}, die schreibst du einfach herunter.`:`${place}: ${shown.join(' + ')}${carry?' + '+carry+' (Übertrag)':''} = ${sum}. ${sum%10} schreiben${next?', '+next+' übertragen':''}.`);
   carry=next;
  }
  return {n,carries,carryAt,outerCarry:carry,steps};
@@ -484,7 +485,8 @@ function subDetail(a,b){
  for(let p=0;p<n;p++){
   const x=dig(a,p),y=dig(b,p),s=y+carry,next=x<s?1:0,r=x+10*next-s;
   carryAt[p]=carry;if(next)borrows++;
-  steps.push(`${places[p]||'Stelle'}: ${carry?`${y} + ${carry} (Übertrag) = ${s}. `:''}${next?`${x} ist kleiner als ${s}, also mit ${x+10} rechnen: `:''}${s} + ${r} = ${x+10*next}. ${p>=String(a-b).length?`Eine 0 ganz vorne schreibt man nicht${next?', aber 1 übertragen':''}.`:`${r} schreiben${next?', 1 übertragen':''}.`}`);
+  const empty=p>=String(b).length;
+  steps.push(`${places[p]||'Stelle'}: ${empty&&!carry?`Unten steht nichts, die ${x} schreibst du einfach herunter.`:`${carry?(empty?`Unten steht nichts, nur der Übertrag ${carry}. `:`${y} + ${carry} (Übertrag) = ${s}. `):''}${next?`${x} ist kleiner als ${s}, also mit ${x+10} rechnen: `:''}${s} + ${r} = ${x+10*next}. `}${empty&&!carry?'':p>=String(a-b).length?`Eine 0 ganz vorne schreibt man nicht${next?', aber 1 übertragen':''}.`:`${r} schreiben${next?', 1 übertragen':''}.`}`);
   carry=next;
  }
  if(carry)throw Error('Ungültige Subtraktion');
