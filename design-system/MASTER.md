@@ -42,7 +42,7 @@ Schriftgrößen: Aufgabe `clamp(36px, 5.6vw, 64px)` 750; Ergebnisfeld 26 px 700;
 | Komponente | Klasse | Zustände |
 |---|---|---|
 | Obere Leiste | `.topbar`, `.brand`, `.ops > .op[aria-current]` | aktiv = dunkle Pille |
-| Einstellungen | `details.settings > summary.settings-toggle + .settings-panel` | zu / offen (Popover; Handy: Bottom-Sheet) |
+| Einstellungen | `details.settings > summary.settings-toggle + .settings-panel` | zu / offen (Popover; Handy: Bottom-Sheet). Felder je Rechenart: Add/Sub „Stellenzahl“ (`#digits`), „Schwierigkeit“, „Anzahl der Zahlen“, Schalter „Zahlen unterschiedlich lang“ (`#unequal`); Mul/Div „Zahlenraum bis“ (`#maximum`) |
 | Bühne | `.stage`, `.stage-head`, `#title`, `#regenerate` | – |
 | Aufgabe | `.expression > .num / .opr / .eq` | – |
 | Antwort | `form.answer-form > .answer-fields > .field-answer / .field-rest / .btn-check` | Fokus-Ring, `aria-invalid` |

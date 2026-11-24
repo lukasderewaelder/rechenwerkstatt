@@ -6,7 +6,9 @@
 
 ## Was die Seite kann
 
-- Aufgaben per Zufall nach Zahlenraum (bis 1 000 … 1 000 000), Schwierigkeit und Anzahl der Zahlen; Division optional mit Rest.
+- Aufgaben per Zufall nach Schwierigkeit und Anzahl der Zahlen; Division optional mit Rest.
+- Multiplikation und Division: Zahlenraum bis 1 000 … 1 000 000.
+- Addition und Subtraktion: Stellenzahl „Bunt gemischt (3–7)“ oder fest 3–8 Stellen; der Schalter „Zahlen unterschiedlich lang“ mischt kurze und lange Zahlen in einer Aufgabe (Standard).
 - Lösung im Kästchenraster wie im Schulbuch: Stellenwert-Kopf, Überträge, Subtraktion durch Ergänzen, Multiplikation mit eingerückten Teilprodukten, Division mit Rest-Pfeil und Kontrolle.
 - Hilfe in Stufen: Strategie → Überschlag → erster Schritt → Lösung Schritt für Schritt mit hervorgehobenen Kästchen.
 - Bei falscher Antwort: Hinweis, ab welcher Stelle es nicht stimmt, mit Sprung zu genau diesem Schritt.

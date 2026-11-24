@@ -444,9 +444,11 @@ html{
   <summary class="settings-toggle"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></svg><span class="visually-hidden">Einstellungen: </span><span class="settings-summary" id="settings-summary">Einstellungen</span></summary>
   <div class="settings-panel" role="group" aria-label="Aufgabe einstellen">
    <div class="settings-head"><h2>Aufgabe einstellen</h2><button class="icon-btn" type="button" id="settings-close" aria-label="Einstellungen schließen"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-   <label class="field"><span class="field-label">Zahlenraum bis</span><select id="maximum" class="select"><option value="1000">1 000</option><option value="10000">10 000</option><option value="100000" selected>100 000</option><option value="1000000">1 000 000</option></select></label>
+   <label class="field" id="digits-area"><span class="field-label">Stellenzahl</span><select id="digits" class="select"><option value="mix" selected>Bunt gemischt (3–7)</option><option value="3">3 Stellen</option><option value="4">4 Stellen</option><option value="5">5 Stellen</option><option value="6">6 Stellen</option><option value="7">7 Stellen</option><option value="8">8 Stellen</option></select></label>
+   <label class="field" id="max-area"><span class="field-label">Zahlenraum bis</span><select id="maximum" class="select"><option value="1000">1 000</option><option value="10000">10 000</option><option value="100000" selected>100 000</option><option value="1000000">1 000 000</option></select></label>
    <label class="field"><span class="field-label">Schwierigkeit</span><select id="difficulty" class="select"><option value="easy">Leicht</option><option value="medium" selected>Normal</option><option value="hard">Knifflig</option></select></label>
    <label class="field" id="terms-area"><span class="field-label">Anzahl der Zahlen</span><select id="terms" class="select"><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
+   <label class="switch" id="unequal-area"><input id="unequal" type="checkbox" checked><span>Zahlen unterschiedlich lang</span></label>
    <label class="switch hidden" id="rest-area"><input id="allow-rest" type="checkbox"><span>Aufgaben mit Rest</span></label>
   </div>
  </details>
@@ -462,9 +464,9 @@ html{
 <script>
 (()=>{'use strict';
 const $=s=>document.querySelector(s),names={add:'Addition',sub:'Subtraktion',mul:'Multiplikation',div:'Division'},symbols={add:'+',sub:'−',mul:'·',div:':'},hashes={addition:'add',subtraktion:'sub',multiplikation:'mul',division:'div'};
-const places=['Einer','Zehner','Hunderter','Tausender','Zehntausender','Hunderttausender','Millionen'];
+const places=['Einer','Zehner','Hunderter','Tausender','Zehntausender','Hunderttausender','Millionen','Zehnmillionen','Hundertmillionen','Milliarden'];
 const fmt=n=>String(Number(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' '),rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,esc=v=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const state={op:'add',max:100000,difficulty:'medium',terms:2,allowRest:false,tasks:[]};
+const state={op:'add',max:100000,digits:'mix',unequal:true,difficulty:'medium',terms:2,allowRest:false,tasks:[]};
 const dig=(n,p)=>Math.floor(n/10**p)%10;
 function addDetail(numbers){
  let n=Math.max(...numbers.map(x=>String(x).length)),carry=0,steps=[],carryAt=[],carries=0;
@@ -500,48 +502,56 @@ function divDetail(a,b){const chars=String(a).split('').map(Number);let remainde
  for(let i=0;i<chars.length;i++){let previous=remainder,part=previous*10+chars[i];if(!started&&part<b){remainder=part;continue}started=true;let digit=Math.floor(part/b),subtract=digit*b;remainder=part-subtract;q+=digit;rows.push({i,part,subtract,remainder,digit,previous});steps.push(`${part} : ${b} = ${digit}, denn ${digit} · ${b} = ${subtract}. Rest: ${remainder}.`)}
  if(+q!==Math.floor(a/b)||remainder!==a%b)throw Error('Ungültige Division');return {rows,steps,remainder,quotient:+q};
 }
-function randomPartition(total,k,min=10){const result=[];for(let i=0;i<k-1;i++){const max=total-min*(k-i-1);const x=rnd(min,max);result.push(x);total-=x;}result.push(total);return result.sort(()=>Math.random()-.5);}
-function easyAddition(k,max){
- for(let trial=0;trial<600;trial++){
-  const target=rnd(Math.max(100,Math.floor(max*.32)),Math.floor(max*.95)),numbers=Array(k).fill(0);
-  String(target).split('').reverse().forEach((c,p)=>{
-   let remaining=Number(c);
-   for(let j=0;j<remaining;j++)numbers[rnd(0,k-1)]+=10**p;
-  });
-  if(numbers.every(n=>n>=10))return numbers;
- }
- // Sichere, übertragsfreie Reserve.
- return Array.from({length:k},(_,i)=>10**(i%2+1));
+// Stellenzahl: "Bunt gemischt" würfelt die Breite pro Aufgabe zwischen 3 und 7 Stellen, sonst fest.
+function pickWidth(){return state.digits==='mix'?rnd(3,7):Number(state.digits)}
+// Längen der Zahlen einer Aufgabe: unterschiedlich lang (mindestens eine Zahl mit n Stellen, die anderen 2 bis n, oft deutlich kürzer) oder alle gleich lang.
+function pickLengths(n,k){
+ if(!state.unequal)return Array(k).fill(n);
+ const L=Array.from({length:k},()=>Math.random()<.5?rnd(2,Math.max(2,n-2)):rnd(2,n));
+ L[rnd(0,k-1)]=n;return L;
 }
-function easySubtraction(k,max){
- // Teile die Ziffern des Minuenden auf k Anteile auf.
- // Damit ist jede anschließende Subtraktion ohne Entbündeln möglich.
- for(let trial=0;trial<900;trial++){
-  const a=rnd(Math.ceil(max*.55),Math.floor(max*.95)),pieces=Array(k).fill(0);
-  String(a).split('').reverse().forEach((c,p)=>{
-   for(let j=0;j<Number(c);j++)pieces[rnd(0,k-1)]+=10**p;
-  });
-  if(pieces.every(x=>x>=10))return [a,...pieces.slice(0,k-1)];
+// Zufallszahl mit len Stellen (führende Ziffer lo..hi); zeros = Wahrscheinlichkeit einer 0 an den übrigen Stellen.
+function randomNumber(len,lo=1,hi=9,zeros=.2){let s=String(rnd(lo,hi));for(let i=1;i<len;i++)s+=Math.random()<zeros?'0':String(rnd(0,9));return Number(s)}
+const fromDigits=ds=>Number(ds.slice().reverse().join(''));
+// Übertragsfreie Addition: Spalte für Spalte nur die Zahlen berücksichtigen, die diese Stelle haben; Spaltensumme höchstens 9.
+function easyAddition(lens){
+ const nums=lens.map(()=>[]);
+ for(let p=0;p<Math.max(...lens);p++){
+  const idx=lens.map((l,i)=>i).filter(i=>lens[i]>p),d=idx.map(i=>p===lens[i]-1?1:0);
+  let extra=rnd(0,9-d.reduce((a,b)=>a+b,0));while(extra-->0)d[rnd(0,d.length-1)]++;
+  idx.forEach((i,j)=>nums[i][p]=d[j]);
  }
- // Garantiert übertragsfreie Ausnahme für jeden angebotenen Zahlenraum.
- const place=10**Math.max(1,String(max).length-2);
- return [place*k,...Array(k-1).fill(place)];
+ return nums.map(fromDigits);
+}
+// Subtraktion ohne Entbündeln: die Ziffern des Minuenden werden auf die Subtrahenden verteilt (nur an deren Stellen). null, wenn eine führende Ziffer nicht passt.
+function easySubtraction(a,lens){
+ const ad=String(a).split('').reverse().map(Number),bs=lens.map(()=>[]);
+ for(let p=0;p<ad.length;p++){
+  const idx=lens.map((l,i)=>i).filter(i=>lens[i]>p),need=idx.filter(i=>lens[i]-1===p).length;
+  if(need>ad[p])return null;
+  const d=idx.map(i=>lens[i]-1===p?1:0);let extra=rnd(0,ad[p]-need);while(extra-->0&&d.length)d[rnd(0,d.length-1)]++;
+  idx.forEach((i,j)=>bs[i][p]=d[j]);
+ }
+ return bs.map(fromDigits);
 }
 function generator(type){let best;
  for(let trial=0;trial<1500;trial++){
   let a,b,result,remainder=0;
   if(type==='add'){
-   const numbers=state.difficulty==='easy'?easyAddition(state.terms,state.max):randomPartition(rnd(Math.ceil(state.max*.4),state.max),state.terms);
-   result=numbers.reduce((x,y)=>x+y,0);const count=addDetail(numbers).carries;best={numbers,result};
-   if(state.difficulty==='easy'?count===0:state.difficulty==='medium'?count>=1:count>=2)return best;
+   const n=pickWidth(),lens=pickLengths(n,state.terms),numbers=state.difficulty==='easy'?easyAddition(lens):lens.map(l=>randomNumber(l));
+   result=numbers.reduce((x,y)=>x+y,0);const count=addDetail(numbers).carries,overlap=lens.slice().sort((x,y)=>y-x)[1],need=state.difficulty==='easy'?0:state.difficulty==='medium'?1:Math.min(Math.max(2,Math.floor(n/2)),overlap);best={numbers,result};
+   if(state.difficulty==='easy'?count===0:count>=need)return best;
   }else if(type==='sub'){
-   let numbers;
-   if(state.difficulty==='easy')numbers=easySubtraction(state.terms,state.max);
-   else {a=rnd(Math.ceil(state.max*.5),state.max);const spend=rnd(Math.max(11*(state.terms-1),Math.floor(a*.35)),a-10);numbers=[a,...randomPartition(spend,state.terms-1)]}
+   // Minuend mit großer führender Ziffer, volle lange Subtrahenden mit kleiner führender Ziffer: Ergebnis bleibt sicher positiv.
+   const n=pickWidth(),m=state.terms-1,aLead=rnd(Math.min(9,2*m),9),cap=Math.floor(aLead/m)-1,lens=state.unequal?Array.from({length:m},()=>Math.random()<.5?rnd(2,Math.max(2,n-2)):rnd(2,n)):Array(m).fill(n);
+   const first=randomNumber(n,aLead,aLead,state.difficulty==='hard'?.45:.2);let numbers;
+   if(state.difficulty==='easy'){const bs=easySubtraction(first,lens);if(!bs)continue;numbers=[first,...bs]}
+   else numbers=[first,...lens.map(l=>l===n?randomNumber(l,1,cap):randomNumber(l))];
    result=numbers.slice(1).reduce((acc,x)=>acc-x,numbers[0]);
-   if(result<0||numbers.some(x=>x<10)||numbers[0]>state.max)continue;
-   let balance=numbers[0],count=0;for(const n of numbers.slice(1)){count+=subDetail(balance,n).borrows;balance-=n}
-   best={numbers,result};if(state.difficulty==='easy'?count===0:state.difficulty==='medium'?count>=1:count>=2)return best;
+   if(result<=0||numbers.some(x=>x<10))continue;
+   let balance=numbers[0],count=0;for(const x of numbers.slice(1)){count+=subDetail(balance,x).borrows;balance-=x}
+   const need=state.difficulty==='easy'?0:state.difficulty==='medium'?1:Math.min(Math.max(2,Math.floor(n/2)),Math.max(...lens));
+   best={numbers,result};if(state.difficulty==='easy'?count===0:count>=need)return best;
   }else if(type==='mul'){
    let digits=state.difficulty==='easy'?1:state.difficulty==='medium'?2:state.max===1000?2:3,lo=digits===1?2:10**(digits-1),hi=digits===1?9:10**digits-1;hi=Math.min(hi,Math.floor(state.max/10));if(hi<lo)continue;
    b=rnd(lo,hi);let amax=Math.floor(state.max/b);if(amax<10)continue;a=rnd(Math.max(10,Math.floor(amax*.15)),amax);if(a<b&&Math.random()<.6)[a,b]=[b,a];result=a*b;best={a,b,result};if(result<=state.max)return best;
@@ -559,7 +569,7 @@ function putRight(row,text,ending,klass=''){put(row,ending-String(text).length+1
 function line(row,first,last,kind='line'){for(let i=Math.max(0,first);i<=Math.min(row.length-1,last);i++)row[i]={...row[i],[kind]:true}}
 // Schrittmarke: Zelle erscheint erst ab Schritt s (Schritt-für-Schritt-Ansicht).
 function stamp(row,s){row.forEach(c=>{if(c.text)c.s=s})}
-const shortPlaces=['E','Z','H','T','ZT','HT','M'];
+const shortPlaces=['E','Z','H','T','ZT','HT','M','ZM','HM','Md'];
 function headerRow(cols,digits){const row=blank(cols);for(let p=0;p<digits;p++)row[cols-1-p]={text:shortPlaces[p]||'',klass:'head'};line(row,cols-digits,cols-1);return row}
 function resultRow(cols,value,klass='result'){const row=blank(cols),s=String(value);putRight(row,s,cols-1,klass);line(row,cols-s.length,cols-1,'double');return row}
 function gridHtml(grid,g){
@@ -635,8 +645,9 @@ const nf=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
 const roundSig=(n,sig)=>{const e=10**Math.max(0,String(n).length-sig);return Math.round(n/e)*e};
 function tipList(t){
  const first='Erster Schritt: '+getLayout(t).steps[0].text;
- if(state.op==='add'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die Zahlen stellengerecht untereinander: Einer unter Einer, Zehner unter Zehner. Fang rechts bei den Einern an.',`Überschlag: ${r.map(fmt).join(' + ')} = ${fmt(r.reduce((a,b)=>a+b,0))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
- if(state.op==='sub'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die größere Zahl oben, Einer unter Einer. Rechne von rechts: Wie viel fehlt von der unteren bis zur oberen Ziffer? Reicht es nicht, rechnest du mit 10 mehr und überträgst 1.',`Überschlag: ${r.map(fmt).join(' − ')} = ${fmt(r.slice(1).reduce((a,b)=>a-b,r[0]))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
+ const uneven=['add','sub'].includes(state.op)&&new Set(t.numbers.map(n=>String(n).length)).size>1?' Die Zahlen sind unterschiedlich lang: Richte sie rechts aus, nicht links.':'';
+ if(state.op==='add'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die Zahlen stellengerecht untereinander: Einer unter Einer, Zehner unter Zehner. Fang rechts bei den Einern an.'+uneven,`Überschlag: ${r.map(fmt).join(' + ')} = ${fmt(r.reduce((a,b)=>a+b,0))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
+ if(state.op==='sub'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die größere Zahl oben, Einer unter Einer. Rechne von rechts: Wie viel fehlt von der unteren bis zur oberen Ziffer? Reicht es nicht, rechnest du mit 10 mehr und überträgst 1.'+uneven,`Überschlag: ${r.map(fmt).join(' − ')} = ${fmt(r.slice(1).reduce((a,b)=>a-b,r[0]))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
  if(state.op==='mul'){const a=roundSig(t.a,1),b=roundSig(t.b,1);return ['Multipliziere die erste Zahl nacheinander mit jeder Ziffer der zweiten Zahl. Jede neue Zeile rückt eine Stelle weiter nach rechts. Zum Schluss addierst du alle Zeilen.',`Überschlag: ${fmt(a)} · ${fmt(b)} = ${fmt(a*b)}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
  const d=divDetail(t.a,t.b);
  return [`Rechne von links: Wie oft passt ${t.b} in die erste Ziffer oder in die ersten beiden? Dann multiplizieren, abziehen und die nächste Ziffer herunterholen.`,`Dein Ergebnis hat ${String(d.quotient).length} Stellen, denn ${t.b} passt zum ersten Mal in ${d.rows[0].part}.`,first];
@@ -705,13 +716,13 @@ function render(){
  if(key&&!$('#settings').contains(ae)){const el=document.querySelector(key);if(el&&!el.disabled)el.focus({preventScroll:true});else{const alt=document.querySelector('#margin .stepper .btn-primary, #margin [data-action="steps"]');if(alt)alt.focus({preventScroll:true})}}
 }
 function revealSolution(){const box=document.getElementById('solution');if(box)box.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
-function updateSummary(){$('#settings-summary').textContent=`bis ${fmt(state.max)} · ${diffNames[state.difficulty]}${['add','sub'].includes(state.op)?` · ${state.terms} Zahlen`:''}${state.op==='div'&&state.allowRest?' · mit Rest':''}`}
+function updateSummary(){const as=['add','sub'].includes(state.op);$('#settings-summary').textContent=`${as?(state.digits==='mix'?'3–7 Stellen':state.digits+' Stellen'):'bis '+fmt(state.max)} · ${diffNames[state.difficulty]}${as?` · ${state.terms} Zahlen`:''}${state.op==='div'&&state.allowRest?' · mit Rest':''}`}
 function generate(focusAnswer){
- state.max=Number($('#maximum').value);state.difficulty=$('#difficulty').value;state.terms=Number($('#terms').value);state.allowRest=$('#allow-rest').checked;
+ state.max=Number($('#maximum').value);state.digits=$('#digits').value;state.unequal=$('#unequal').checked;state.difficulty=$('#difficulty').value;state.terms=Number($('#terms').value);state.allowRest=$('#allow-rest').checked;
  state.tasks=[{...generator(state.op),answer:'',restAnswer:'',feedback:null,detail:null,tip:0,show:false,step:null}];
  updateSummary();render();if(focusAnswer===true)$('#task [data-field="answer"]').focus();
 }
-function changePage(){state.op=hashes[decodeURIComponent(location.hash.slice(1))]||'add';$('#title').textContent='Schriftliche '+names[state.op];$('#rest-area').classList.toggle('hidden',state.op!=='div');$('#terms-area').classList.toggle('hidden',!['add','sub'].includes(state.op));document.querySelectorAll('.op').forEach(el=>{if(el.dataset.op===state.op)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current')});generate()}
+function changePage(){state.op=hashes[decodeURIComponent(location.hash.slice(1))]||'add';$('#title').textContent='Schriftliche '+names[state.op];$('#rest-area').classList.toggle('hidden',state.op!=='div');const as=['add','sub'].includes(state.op);['terms-area','digits-area','unequal-area'].forEach(id=>$('#'+id).classList.toggle('hidden',!as));$('#max-area').classList.toggle('hidden',as);document.querySelectorAll('.op').forEach(el=>{if(el.dataset.op===state.op)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current')});generate()}
 function parseValue(s){let v=String(s||'').trim().replace(/[.\s  ]/g,'');return /^\d+$/.test(v)?Number(v):NaN}
 function check(){
  const t=state.tasks[0],v=parseValue(t.answer),r=String(t.restAnswer).trim()===''?0:parseValue(t.restAnswer);
@@ -748,7 +759,7 @@ function act(action,btn){
 /* ===== Ereignisse ===== */
 $('#pages').addEventListener('click',e=>{const a=e.target.closest('a[data-op]');if(a&&a.getAttribute('href')===location.hash)changePage()});window.addEventListener('hashchange',changePage);
 $('#regenerate').addEventListener('click',()=>generate());
-['maximum','difficulty','terms','allow-rest'].forEach(id=>$('#'+id).addEventListener('change',()=>generate()));
+['maximum','digits','unequal','difficulty','terms','allow-rest'].forEach(id=>$('#'+id).addEventListener('change',()=>generate()));
 $('#settings-close').addEventListener('click',()=>{$('#settings').open=false;$('#settings summary').focus()});
 document.addEventListener('click',e=>{const s=$('#settings');if(s.open&&!s.contains(e.target))s.open=false});
 document.addEventListener('keydown',e=>{const s=$('#settings');if(e.key==='Escape'&&s.open){s.open=false;s.querySelector('summary').focus()}});
