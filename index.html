@@ -139,6 +139,9 @@ button{cursor:pointer}
 .cell.focus{background-color:var(--focus-bg)}
 .cell.now{background-color:var(--now-bg)}
 .cell.pending{color:transparent!important}
+.cell.correction{color:#A9531A;font-size:14px;font-weight:800}
+.cell.struck{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:#A9531A}
+.solution.stepping .cell.correction:not(.focus):not(.now):not(.pending){color:#A9531A}
 .grid-arrow.pending{opacity:0}
 
 /* ===== Randspalte ===== */
@@ -480,17 +483,21 @@ function addDetail(numbers){
  return {n,carries,carryAt,outerCarry:carry,steps};
 }
 function subDetail(a,b){
- // Subtrahieren durch Ergänzen: die untere Zahl wird stellenweise bis zur oberen aufgefüllt.
- const n=Math.max(String(a).length,String(b).length);let carry=0,steps=[],carryAt=[],borrows=0;
- for(let p=0;p<n;p++){
-  const x=dig(a,p),y=dig(b,p),s=y+carry,next=x<s?1:0,r=x+10*next-s;
-  carryAt[p]=carry;if(next)borrows++;
-  const empty=p>=String(b).length;
-  steps.push(`${places[p]||'Stelle'}: ${empty&&!carry?`Unten steht nichts, die ${x} schreibst du einfach herunter.`:`${carry?(empty?`Unten steht nichts, nur der Übertrag ${carry}. `:`${y} + ${carry} (Übertrag) = ${s}. `):''}${next?`${x} ist kleiner als ${s}, also mit ${x+10} rechnen: `:''}${s} + ${r} = ${x+10*next}. `}${empty&&!carry?'':p>=String(a-b).length?`Eine 0 ganz vorne schreibt man nicht${next?', aber 1 übertragen':''}.`:`${r} schreiben${next?', 1 übertragen':''}.`}`);
-  carry=next;
+ // Subtrahieren durch Entbündeln: reicht die obere Ziffer nicht, wird links 1 weggenommen (Nullen dazwischen werden zu 9) und die Stelle bekommt 10 dazu.
+ const n=Math.max(String(a).length,String(b).length),A=String(a).padStart(n,'0').split('').map(Number),B=String(b).padStart(n,'0').split('').map(Number),original=A.slice(),changes=A.map(()=>[]),steps=[],L=String(a-b).length,lenB=String(b).length;let borrows=0;
+ for(let i=n-1;i>=0;i--){
+  const p=n-1-i,place=places[p]||'Stelle',cur=A[i],y=B[i],noDigit=p>=lenB;let from=-1,r;
+  const lead=cur!==original[i]?(original[i]===0?'Die 0 ist zur 9 geworden. ':`Aus ${original[i]} ist ${cur} geworden. `):'';
+  let calc;
+  if(cur<y){
+   from=i-1;while(from>=0&&A[from]===0)from--;if(from<0)throw Error('Ungültige Subtraktion');
+   A[from]--;changes[from].push({v:A[from],s:p});for(let j=from+1;j<i;j++){A[j]=9;changes[j].push({v:9,s:p})}
+   A[i]+=10;changes[i].push({v:A[i],s:p});borrows++;r=A[i]-y;
+   calc=`${cur} − ${y} geht nicht. Entbündeln: Nimm 1 von der ${places[n-1-from]||'Stelle'}stelle${from<i-1?' (die Nullen dazwischen werden zu 9)':''}. Dann: ${A[i]} − ${y} = ${r}.`;
+  }else{r=cur-y;calc=noDigit?`Unten steht nichts, also ${cur} − 0 = ${r}.`:`${cur} − ${y} = ${r}.`}
+  steps.push(`${place}: ${lead}${calc} ${p>=L?'Eine 0 ganz vorne schreibt man nicht.':`${r} schreiben.`}`);
  }
- if(carry)throw Error('Ungültige Subtraktion');
- return {n,borrows,carryAt,steps};
+ return {n,borrows,original,changes,steps};
 }
 function multDetail(a,b){
  const bd=String(b).split('').map(Number),L=bd.length,parts=[],steps=[];
@@ -575,7 +582,7 @@ const shortPlaces=['E','Z','H','T','ZT','HT','M','ZM','HM','Md'];
 function headerRow(cols,digits){const row=blank(cols);for(let p=0;p<digits;p++)row[cols-1-p]={text:shortPlaces[p]||'',klass:'head'};line(row,cols-digits,cols-1);return row}
 function resultRow(cols,value,klass='result'){const row=blank(cols),s=String(value);putRight(row,s,cols-1,klass);line(row,cols-s.length,cols-1,'double');return row}
 function gridHtml(grid,g){
- const cell=(c,r,i)=>c.skip?'':`<div class="cell ${esc(c.klass||'')}${c.line?' underline':''}${c.double?' double':''}" data-r="${r}" data-c="${i}"${c.s!=null?` data-s="${c.s}"`:''}${c.span>1?` style="grid-column:span ${c.span};width:calc(var(--sq) * ${c.span})"`:''}>${esc(c.text||'')}</div>`;
+ const cell=(c,r,i)=>c.skip?'':`<div class="cell ${esc(c.klass||'')}${c.line?' underline':''}${c.double?' double':''}" data-r="${r}" data-c="${i}"${c.s!=null?` data-s="${c.s}"`:''}${c.x!=null?` data-x="${c.x}"`:''}${c.span>1?` style="grid-column:span ${c.span};width:calc(var(--sq) * ${c.span})"`:''}>${esc(c.text||'')}</div>`;
  return `<figure class="paper" data-g="${g}">${grid.label?`<figcaption class="paper-label">${esc(grid.label)}</figcaption>`:''}<div class="paper-shell"><div class="paper-grid" style="--columns:${grid.cols};--rows:${grid.rows.length}" role="img" aria-label="${esc(grid.aria||'Schriftliche Rechnung')}">${grid.rows.map((row,r)=>`<div class="math-row">${row.map((c,i)=>cell(c,r,i)).join('')}</div>`).join('')}${grid.overlay||''}</div></div></figure>`;
 }
 // Jede Layout-Funktion liefert {grids:[{rows,cols,overlay,label,aria}], steps:[{text,g,cols,rows,cells}]}.
@@ -587,10 +594,11 @@ function additionLayout(t){
  return {grids:[{rows,cols,aria:`${nums.join(' plus ')} gleich ${t.result}`}],steps:d.steps.map((text,p)=>({text,g:0,cols:[cols-1-p]}))};
 }
 function oneSubtraction(a,b,off){
- const d=subDetail(a,b),r=a-b,len=String(r).length,cols=d.n+1,rows=[headerRow(cols,d.n)],top=blank(cols);
- putRight(top,a,cols-1);rows.push(top);
+ const d=subDetail(a,b),r=a-b,len=String(r).length,cols=d.n+1,rows=[headerRow(cols,d.n)],K=Math.max(0,...d.changes.map(c=>c.length));
+ // Entbündeln: neue Ziffern klein über der Zahl, die alte Ziffer wird durchgestrichen (erst, wenn sie ersetzt wird).
+ for(let k=K;k>=1;k--){const row=blank(cols);d.changes.forEach((ch,i)=>{if(ch.length>=k){row[i+1]={text:String(ch[k-1].v),klass:'correction',s:off+ch[k-1].s};if(ch.length>k)row[i+1].x=off+ch[k].s}});rows.push(row)}
+ const top=blank(cols);putRight(top,a,cols-1);d.changes.forEach((ch,i)=>{if(ch.length)top[i+1]={...top[i+1],x:off+ch[0].s}});rows.push(top);
  const second=blank(cols);put(second,0,'−','operator');putRight(second,b,cols-1);line(second,0,cols-1);rows.push(second);
- if(d.borrows){const row=blank(cols);for(let p=1;p<d.n;p++)if(d.carryAt[p]){put(row,cols-1-p,d.carryAt[p],'carry');row[cols-1-p].s=off+p-1}rows.push(row)}
  const res=resultRow(cols,r);for(let p=0;p<len;p++)res[cols-1-p].s=off+p;rows.push(res);
  return {grid:{rows,cols,aria:`${a} minus ${b} gleich ${r}`},steps:d.steps,cols};
 }
@@ -649,7 +657,7 @@ function tipList(t){
  const first='Erster Schritt: '+getLayout(t).steps[0].text;
  const uneven=['add','sub'].includes(state.op)&&new Set(t.numbers.map(n=>String(n).length)).size>1?' Die Zahlen sind unterschiedlich lang: Richte sie rechts aus, nicht links.':'';
  if(state.op==='add'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die Zahlen stellengerecht untereinander: Einer unter Einer, Zehner unter Zehner. Fang rechts bei den Einern an.'+uneven,`Überschlag: ${r.map(fmt).join(' + ')} = ${fmt(r.reduce((a,b)=>a+b,0))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
- if(state.op==='sub'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die größere Zahl oben, Einer unter Einer. Rechne von rechts: Wie viel fehlt von der unteren bis zur oberen Ziffer? Reicht es nicht, rechnest du mit 10 mehr und überträgst 1.'+uneven,`Überschlag: ${r.map(fmt).join(' − ')} = ${fmt(r.slice(1).reduce((a,b)=>a-b,r[0]))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
+ if(state.op==='sub'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die größere Zahl oben, Einer unter Einer. Rechne von rechts: obere Ziffer minus untere Ziffer. Geht das nicht, entbündelst du: Links 1 wegnehmen und mit 10 mehr rechnen.'+uneven,`Überschlag: ${r.map(fmt).join(' − ')} = ${fmt(r.slice(1).reduce((a,b)=>a-b,r[0]))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
  if(state.op==='mul'){const a=roundSig(t.a,1),b=roundSig(t.b,1);return ['Multipliziere die erste Zahl nacheinander mit jeder Ziffer der zweiten Zahl. Jede neue Zeile rückt eine Stelle weiter nach rechts. Zum Schluss addierst du alle Zeilen.',`Überschlag: ${fmt(a)} · ${fmt(b)} = ${fmt(a*b)}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
  const d=divDetail(t.a,t.b);
  return [`Rechne von links: Wie oft passt ${t.b} in die erste Ziffer oder in die ersten beiden? Dann multiplizieren, abziehen und die nächste Ziffer herunterholen.`,`Dein Ergebnis hat ${String(d.quotient).length} Stellen, denn ${t.b} passt zum ersten Mal in ${d.rows[0].part}.`,first];
@@ -687,7 +695,7 @@ function taskHtml(t){
 ${t.show?solutionHtml(t):''}`;
 }
 function solutionHtml(t){const L=getLayout(t);return `<section class="solution" id="solution" aria-labelledby="solution-title"><div class="solution-head"><h2 id="solution-title">Lösung</h2><p class="solution-value">${fmt(t.result)}${state.op==='div'&&t.remainder?' Rest '+t.remainder:''}</p></div><div class="papers">${L.grids.map(gridHtml).join('')}</div></section>`}
-function methodHint(){return state.op==='sub'?'Hier wird durch Ergänzen gerechnet. Auch andere Rechenwege sind richtig.':'Dein Rechenweg darf etwas anders aussehen und trotzdem richtig sein.'}
+function methodHint(){return state.op==='sub'?'Hier wird durch Entbündeln gerechnet. Auch andere Rechenwege sind richtig.':'Dein Rechenweg darf etwas anders aussehen und trotzdem richtig sein.'}
 function marginHtml(t){
  const tips=tipList(t),more=t.tip<tips.length;let html=`<section class="note note-help" aria-labelledby="help-title"><h2 class="note-title" id="help-title">${icon('bulb')} Hilfe</h2>`;
  html+=t.tip?`<ol class="tips">${tips.slice(0,t.tip).map((x,i)=>`<li class="tip"><span class="tip-no" aria-hidden="true">${i+1}</span><p><span class="visually-hidden">Tipp ${i+1}: </span>${esc(x)}</p></li>`).join('')}</ol>`:`<p class="note-text">Rechne zuerst selbst auf Papier. Wenn du feststeckst, hol dir einen Tipp.</p>`;
@@ -706,6 +714,7 @@ function applyStep(){
  const k=t.step,step=k==null?null:getLayout(t).steps[k];
  box.classList.toggle('stepping',k!=null);
  box.querySelectorAll('[data-s]').forEach(el=>{const s=+el.dataset.s;el.classList.toggle('pending',k!=null&&s>k);el.classList.toggle('now',k!=null&&s===k)});
+ box.querySelectorAll('[data-x]').forEach(el=>el.classList.toggle('struck',k==null||+el.dataset.x<=k));
  box.querySelectorAll('.focus').forEach(el=>el.classList.remove('focus'));
  if(!step)return;
  const fig=box.querySelector(`[data-g="${step.g}"]`);if(!fig)return;
