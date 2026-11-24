@@ -2,60 +2,468 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#F5F6F8">
 <title>Rechenwerkstatt – schriftliches Rechnen</title>
 <style>
-:root{--ink:#223349;--muted:#66758b;--accent:#315fba;--pale:#eaf1fc;--bg:#f4f7fb;--line:#dce5f0;--paper:#fff;--green:#187052;--greenbg:#e9f8f0;--red:#a33d43;--redbg:#fff0f0;--note:#b45e13;--sq:34px}
-*{box-sizing:border-box}html{color-scheme:light}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.5}
-button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #7eaaef;outline-offset:2px}
-.app{max-width:1150px;margin:0 auto;padding:26px 22px 65px}.kicker{font-size:11px;font-weight:850;letter-spacing:.16em;color:var(--accent);margin:0 0 5px;text-transform:uppercase}.hero h1{font-size:clamp(27px,4vw,38px);line-height:1.18;letter-spacing:-.035em;margin:0}.subtitle{color:var(--muted);margin:7px 0 22px;font-size:14px}
-.operation-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:18px}.nav-link{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);padding:14px 16px;border:1px solid var(--line);background:#fff;border-radius:15px;box-shadow:0 3px 12px #1b365708;min-width:0}.nav-link:hover{border-color:#97b8e7}.nav-link[aria-current="page"]{border:2px solid var(--accent);background:var(--pale);padding:13px 15px}.nav-symbol{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:10px;background:#f0f4fb;font-size:21px;font-weight:800;color:var(--accent)}.nav-link[aria-current="page"] .nav-symbol{color:white;background:var(--accent)}.nav-name{font-size:14px;font-weight:800;min-width:0}
-.settings{display:flex;flex-direction:column;gap:18px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:19px 22px;box-shadow:0 7px 24px #1b365706}.settings-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.label{display:block;color:#52657c;font-size:12px;font-weight:750;margin-bottom:7px}.select,.answer{width:100%;background:white;border:1px solid #cbd6e4;border-radius:10px;padding:10px 13px;min-height:44px;color:var(--ink)}.settings-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:15px;border-top:1px solid var(--line)}.toggle{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--ink)}.toggle input{width:17px;height:17px;accent-color:var(--accent)}.settings-actions{display:flex;gap:9px;flex-wrap:wrap;margin-left:auto}.btn{border-radius:10px;padding:10px 15px;min-height:42px;background:white;border:1px solid #cbd6e4;font-size:13px;font-weight:750;color:var(--ink)}.btn:hover{border-color:var(--accent)}.btn-primary{background:var(--accent);border-color:var(--accent);color:white}.btn-primary:hover{background:#214d9f;color:white}
-.section-heading{margin:30px 2px 14px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}.section-heading h2{font-size:19px;letter-spacing:-.02em;margin:0}.section-heading p{margin:0;color:var(--muted);font-size:12px}.tasks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.tasks[data-operation="div"]{grid-template-columns:1fr}.task{background:#fff;border:1px solid var(--line);border-radius:17px;padding:21px;min-width:0;box-shadow:0 3px 14px #20365106}.task-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.task-top strong{font-size:12px;letter-spacing:.075em;text-transform:uppercase;color:#66758b}.task-top .number{font-size:12px;color:#8898a9;font-weight:700}.expression{font-size:clamp(21px,2.5vw,27px);font-weight:770;letter-spacing:.015em;margin:20px 0 21px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.expression span{color:var(--accent)}.check-row{display:flex;gap:9px;align-items:end;flex-wrap:wrap}.input-wrap{flex:1;min-width:125px}.input-wrap.rest{flex:0 1 120px;min-width:90px}.check-row .btn{flex:none}.answer{font-size:16px;font-variant-numeric:tabular-nums}.feedback{padding:9px 12px;margin-top:12px;border-radius:9px;font-size:13px;font-weight:700}.feedback.correct{background:var(--greenbg);color:var(--green)}.feedback.wrong{background:var(--redbg);color:var(--red)}.solution-button{display:flex;align-items:center;gap:6px;border:0;background:transparent;color:var(--accent);padding:17px 0 0;font-weight:800;font-size:13px}.solution-button:hover{text-decoration:underline}.solution{margin-top:16px;border-top:1px solid var(--line);padding-top:17px}.solution-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;margin-bottom:12px;font-size:13px;font-weight:800}.solution-head span{color:var(--green)}.method{font-size:12px;color:#596a7c;font-weight:670;margin:4px 0 11px}.paper-shell{border:1px solid #d8e2ef;border-radius:12px;background:#f9fbfe;padding:15px 12px;overflow:auto;max-width:100%;scrollbar-width:thin}.paper-grid{width:max-content;background-color:#fff;background-image:linear-gradient(to right,#d4e3f5 1px,transparent 1px),linear-gradient(to bottom,#d4e3f5 1px,transparent 1px);background-size:var(--sq) var(--sq);border-top:1px solid #d4e3f5;border-left:1px solid #d4e3f5;box-shadow:1px 1px 0 #d4e3f5;min-width:calc(var(--columns) * var(--sq))}.math-row{height:var(--sq);display:grid;grid-template-columns:repeat(var(--columns),var(--sq));position:relative}.cell{height:var(--sq);width:var(--sq);display:flex;justify-content:center;align-items:center;position:relative;font-family:"DejaVu Sans Mono","Consolas",monospace;font-weight:740;font-size:19px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums;z-index:1}.cell.operator{font-size:23px;font-weight:500;color:#223349}.cell.result{font-weight:900;color:#136850}.cell.carry{font-size:14px;color:var(--accent);font-weight:850;align-items:center}.cell.correction{font-size:14px;color:var(--note);font-weight:850}.cell.has-strike{text-decoration:line-through;text-decoration-color:#b46b39;text-decoration-thickness:1.5px}.cell.has-edit .original{text-decoration:line-through;text-decoration-thickness:1.5px;text-decoration-color:#b46b39;position:absolute;bottom:2px;line-height:20px}.cell .replacement{position:absolute;top:0;font-size:12px;line-height:12px;color:#ae5917;background:#fffdf7;font-weight:900;padding:0 2px;z-index:2;border-radius:2px}.cell.underline{border-bottom:2px solid #344965}.empty-text{margin:0}.explain-title{font-size:12px;font-weight:850;color:#344965;margin:17px 0 7px}.steps{font-size:13px;color:#506176;margin:0;padding-left:23px}.steps li{margin:6px 0;padding-left:4px}.steps li::marker{color:var(--accent);font-weight:800}.paper-legend{font-size:11px;color:#5f7084;margin:10px 0 0}.paper-legend strong{color:#ae5917}.notes{font-size:12px;color:#69798b;margin-top:22px}.notes a{color:var(--accent)}.hidden{display:none!important}
-@media(max-width:980px){.nav-link{padding:12px}.nav-link[aria-current="page"]{padding:11px}.nav-name{font-size:12px}.task{padding:16px}:root{--sq:30px}.cell{font-size:17px}.cell.operator{font-size:20px}}
-@media(max-width:780px){.app{padding:20px 13px 48px}.tasks{grid-template-columns:1fr}.operation-nav{gap:6px}.nav-link{flex-direction:column;text-align:center;gap:6px}.nav-link[aria-current="page"]{padding:11px}.nav-symbol{height:30px;width:30px}.nav-name{font-size:12px}.section-heading{display:block}.section-heading p{margin-top:4px}}
-@media(max-width:520px){.settings{padding:16px}.settings-grid{grid-template-columns:1fr;gap:10px}.settings-bottom{align-items:stretch}.settings-actions{width:100%;margin:0}.settings-actions .btn{flex:1}.nav-name{font-size:10px}.nav-symbol{height:28px;width:28px;font-size:18px}.nav-link{padding:8px 2px}.nav-link[aria-current="page"]{padding:7px 1px}.task{padding:15px}:root{--sq:28px}.cell{font-size:16px}.cell.operator{font-size:18px}.paper-shell{padding:10px 7px}}
-@media print{body{background:white}.app{max-width:none;padding:0}.operation-nav,.settings,.solution-button,.check-row,.feedback,.notes,.section-heading p{display:none!important}.tasks{grid-template-columns:repeat(2,minmax(0,1fr))!important}.task{box-shadow:none;break-inside:avoid}.expression{margin:14px 0}.solution{break-inside:avoid}.section-heading{margin-top:16px}.paper-shell{overflow:visible}}
+/* ===== Tokens (siehe design-system/MASTER.md) ===== */
+:root{
+ --bg:#F5F6F8;--surface:#FFFFFF;--surface-2:#FAFBFC;
+ --ink:#141B2D;--ink-2:#46526A;--ink-3:#667085;
+ --line:#E2E6ED;--line-strong:#CBD3DF;
+ --accent:#2B59C3;--accent-strong:#1F4396;--accent-soft:#EBF0FC;
+ --hint:#8A4B00;--hint-soft:#FFF4DE;--hint-line:#F3C77A;--hint-ink:#4A3200;
+ --ok:#15693B;--ok-soft:#E5F4EA;--err:#A8251C;--err-soft:#FCECEA;
+ --margin-line:#EFA39A;--grid:#D5E1F2;--grid-ink:#26324A;--rest:#D23F1A;--rule:#344965;
+ --focus:#2B59C3;--focus-bg:rgb(43 89 195 / .09);--now-bg:rgb(255 196 0 / .30);
+ --font:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+ --mono:"Consolas","DejaVu Sans Mono",ui-monospace,monospace;
+ --r-s:8px;--r-m:14px;--r-l:24px;
+ --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;
+ --shadow:0 1px 2px rgb(20 27 45 / .05),0 8px 28px rgb(20 27 45 / .06);
+ --t-fast:140ms;--t:220ms;--ease:cubic-bezier(.2,.7,.2,1);
+ --sq:34px;
+}
+*{box-sizing:border-box}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.hidden{display:none!important}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.icon{width:18px;height:18px;flex:none}
 
-/* Ruhige Einzelaufgaben-Ansicht */
-.app{max-width:900px;padding-top:28px}.hero{margin-bottom:18px}.hero h1{font-size:clamp(27px,4vw,34px)}
-.operation-nav{margin-bottom:14px}.settings{gap:12px;padding:16px 19px}.settings-grid{gap:13px}
-.settings-bottom{padding-top:12px}.tasks{display:block!important}.task{padding:26px 29px;max-width:100%}
-.expression{font-size:clamp(24px,3.6vw,31px);line-height:1.65;overflow-wrap:normal;word-break:normal;margin:12px 0 23px}
-.task-top strong{letter-spacing:0;text-transform:none;font-size:14px;color:#506176}
-.solution-head{font-size:15px}.solution{padding-top:18px}.paper-shell{background:#fff;max-width:100%}
-.solution-calc + .solution-calc{margin-top:20px}.calc-label{font-size:13px;font-weight:750;color:#536982;margin:0 0 7px}
-.method-note{margin:16px 0 0;color:#586979;font-size:13px}
-.step-details{margin-top:16px;font-size:13px;color:#506176}.step-details summary{cursor:pointer;color:#315fba;font-weight:700;width:max-content}
-.step-details[open] .steps{margin-top:9px}.solution-button{font-size:14px}
-@media(max-width:780px){.app{padding:15px 13px 40px}.task{padding:20px}.operation-nav{gap:7px}}
-@media(max-width:520px){.settings-grid{grid-template-columns:1fr 1fr;gap:11px}.settings-grid label#terms-area{grid-column:span 2}.task{padding:16px}.expression{font-size:22px;margin-bottom:18px}.check-row .btn{flex:1}.settings-bottom .settings-actions{width:auto;flex:1}.settings-actions .btn{width:100%}.input-wrap{min-width:120px}}
+/* ===== Rahmen ===== */
+.app{max-width:1200px;margin:0 auto;padding:var(--space-5) var(--space-5) var(--space-8)}
+
+/* Obere Leiste */
+.topbar{display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
+.brand{display:inline-flex;align-items:center;gap:10px;margin-right:auto;color:var(--ink);text-decoration:none;font-weight:800;letter-spacing:-.01em;border-radius:var(--r-s)}
+.brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--ink);color:#fff}
+.ops{display:flex;gap:4px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px}
+.op{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 8px;border-radius:999px;color:var(--ink-2);text-decoration:none;font-size:14px;font-weight:650;transition:background-color var(--t-fast),color var(--t-fast)}
+.op:hover{background:var(--bg);color:var(--ink)}
+.op-symbol{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--bg);font-size:18px;font-weight:800;line-height:1}
+.op[aria-current="page"]{background:var(--ink);color:#fff}
+.op[aria-current="page"] .op-symbol{background:rgb(255 255 255 / .16);color:#fff}
+
+/* Einstellungen */
+.settings{position:relative}
+.settings-toggle{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;list-style:none;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink-2);font-size:14px;font-weight:650;cursor:pointer;transition:border-color var(--t-fast),color var(--t-fast)}
+.settings-toggle::-webkit-details-marker{display:none}
+.settings-toggle:hover{border-color:var(--line-strong);color:var(--ink)}
+.settings[open] .settings-toggle{border-color:var(--accent);color:var(--accent-strong)}
+.settings-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:20;width:320px;display:grid;gap:var(--space-4);padding:var(--space-5);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);box-shadow:var(--shadow),0 24px 48px rgb(20 27 45 / .10)}
+.settings-head{display:flex;align-items:center;justify-content:space-between;margin:-6px -10px -4px 0}
+.settings-head h2{margin:0;font-size:15px}
+.field{display:grid;gap:6px}
+.field-label{font-size:13px;font-weight:700;color:var(--ink-2)}
+.select{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--line-strong);border-radius:var(--r-s);background:var(--surface)}
+.switch{display:flex;align-items:center;gap:10px;min-height:44px;font-size:15px;cursor:pointer}
+.switch input{width:20px;height:20px;accent-color:var(--accent)}
+
+/* ===== Arbeitsfläche ===== */
+.workspace{display:grid;gap:var(--space-6)}
+.stage{min-width:0;padding:var(--space-6);background:var(--surface);border-radius:var(--r-l);box-shadow:var(--shadow)}
+.stage-head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-5)}
+.stage-title{margin:0;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+/* Aufgabe */
+.expression{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:.3em;margin:0 0 var(--space-6);font-size:clamp(36px,5.6vw,64px);font-weight:750;line-height:1.15;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.expression .num{white-space:nowrap}
+.expression .opr{color:var(--accent);font-weight:500}
+.expression .eq{color:var(--ink-3);font-weight:500;white-space:nowrap}
+
+/* Antwort */
+.answer-fields{display:flex;flex-wrap:wrap;align-items:flex-end;gap:var(--space-3)}
+.field-answer{flex:1 1 220px;max-width:340px}
+.field-rest{flex:0 0 112px}
+.answer{width:100%;min-height:60px;padding:0 16px;border:2px solid var(--line-strong);border-radius:var(--r-m);background:var(--surface);font-size:26px;font-weight:700;letter-spacing:.02em;font-variant-numeric:tabular-nums;transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+.answer::placeholder{color:#A0A9B8;font-weight:500}
+.answer:hover{border-color:#AAB6C8}
+.answer:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.answer[aria-invalid="true"]{border-color:var(--err)}
+
+/* Knöpfe */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;min-height:44px;padding:0 18px;border:1px solid transparent;border-radius:999px;background:none;font-size:15px;font-weight:700;text-decoration:none;transition:background-color var(--t-fast),border-color var(--t-fast),color var(--t-fast),transform var(--t-fast)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--accent-strong)}
+.btn-check{min-height:60px;padding:0 28px;border-radius:var(--r-m);font-size:17px}
+.btn-soft{background:var(--accent-soft);color:var(--accent-strong)}
+.btn-soft:hover:not(:disabled){background:#DCE6FA}
+.btn-ghost{border-color:var(--line);color:var(--ink-2)}
+.btn-ghost:hover{border-color:var(--line-strong);color:var(--ink)}
+.btn-link{min-height:44px;padding:0 2px;border-radius:var(--r-s);color:var(--accent-strong);font-weight:650}
+.btn-link:hover{text-decoration:underline;text-underline-offset:3px}
+.icon-btn{display:grid;place-items:center;width:44px;height:44px;flex:none;border:0;border-radius:50%;background:none;color:var(--ink-3);transition:background-color var(--t-fast),color var(--t-fast)}
+.icon-btn:hover{background:var(--bg);color:var(--ink)}
+
+/* Rückmeldung */
+.feedback{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3);max-width:640px;margin-top:var(--space-4);padding:var(--space-3) var(--space-4);border-radius:var(--r-m);font-size:15px;animation:rise var(--t) var(--ease)}
+.feedback>.icon{width:22px;height:22px}
+.feedback-text{flex:1 1 220px;margin:0}
+.feedback-text strong{font-weight:800}
+.feedback.is-correct{background:var(--ok-soft);color:var(--ok)}
+.feedback.is-wrong{background:var(--err-soft);color:var(--err)}
+.feedback.is-wrong .btn{background:var(--surface);border-color:#F0C3BE;color:var(--err)}
+.feedback.is-wrong .btn:hover{border-color:var(--err)}
+@keyframes rise{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ===== Lösung im Kästchenraster ===== */
+.solution{margin-top:var(--space-6);padding-top:var(--space-5);border-top:1px dashed var(--line-strong)}
+.solution-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-4)}
+.solution-head h2{margin:0;font-size:15px;font-weight:800;color:var(--ink-2)}
+.solution-value{margin:0;font-weight:800;color:var(--ok);font-variant-numeric:tabular-nums}
+.solution.stepping .solution-value{visibility:hidden}
+.papers{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--space-5)}
+.paper{min-width:0;max-width:100%;margin:0}
+.paper-label{margin:0 0 6px;font-size:13px;font-weight:700;color:var(--ink-3)}
+.paper-shell{max-width:100%;padding:2px;overflow-x:auto;scrollbar-width:thin}
+.paper-grid{position:relative;width:max-content;min-width:calc(var(--columns) * var(--sq));background-color:#fff;background-image:linear-gradient(to right,var(--grid) 1px,transparent 1px),linear-gradient(to bottom,var(--grid) 1px,transparent 1px);background-size:var(--sq) var(--sq);border-top:1px solid var(--grid);border-left:1px solid var(--grid);box-shadow:1px 1px 0 var(--grid)}
+.math-row{display:grid;grid-template-columns:repeat(var(--columns),var(--sq));height:var(--sq)}
+.cell{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:var(--sq);height:var(--sq);color:var(--grid-ink);font-family:var(--mono);font-size:19px;font-weight:700;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums;transition:color var(--t),background-color var(--t)}
+.cell.operator{font-size:23px;font-weight:500}
+.cell.result{color:var(--ok);font-weight:900}
+.cell.carry{color:var(--accent);font-size:14px;font-weight:800}
+.cell.head{color:#5B7391;font-family:var(--font);font-size:13px;font-weight:800}
+.cell.word{justify-content:flex-start;padding-left:3px;font-family:var(--font);font-size:16px;font-weight:650}
+.cell.rest{color:var(--rest);font-weight:900}
+.cell.underline{border-bottom:2px solid var(--rule)}
+.cell.double{border-bottom:3px double var(--rule)}
+.grid-arrow{position:absolute;left:0;top:0;z-index:3;width:calc(var(--columns) * var(--sq));height:calc(var(--rows) * var(--sq));overflow:visible;pointer-events:none;transition:opacity var(--t)}
+/* Schritt-für-Schritt */
+.solution.stepping .cell:not(.focus):not(.now):not(.pending){color:var(--ink-3)}
+.cell.focus{background-color:var(--focus-bg)}
+.cell.now{background-color:var(--now-bg)}
+.cell.pending{color:transparent!important}
+.grid-arrow.pending{opacity:0}
+
+/* ===== Randspalte ===== */
+.margin{display:grid;align-content:start;gap:var(--space-4);min-width:0}
+.note{padding:var(--space-4) var(--space-5) var(--space-5);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m)}
+.note-title-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);margin:-6px -12px var(--space-2) 0}
+.note-title{display:flex;align-items:center;gap:8px;margin:0;font-size:14px;font-weight:800}
+.note-help .note-title{color:var(--hint)}
+.note-steps{border-color:#C9D7F5}
+.note-steps .note-title{color:var(--accent-strong)}
+.note-text{margin:0;color:var(--ink-2);font-size:15px}
+.note-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2) var(--space-4);margin-top:var(--space-4)}
+.note-fine{margin:var(--space-4) 0 0;color:var(--ink-3);font-size:13px}
+.tips{display:grid;gap:var(--space-3);margin:var(--space-2) 0 0;padding:0;list-style:none}
+.tip{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start;padding:var(--space-3);background:var(--hint-soft);border-radius:var(--r-s);animation:rise var(--t) var(--ease)}
+.tip p{margin:0;color:var(--hint-ink);font-size:15px}
+.tip-no{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--hint-line);color:var(--hint-ink);font-size:13px;font-weight:800}
+.progress{height:4px;margin:var(--space-2) 0 var(--space-3);overflow:hidden;background:var(--line);border-radius:4px}
+.progress span{display:block;height:100%;background:var(--accent);transition:width var(--t) var(--ease)}
+.step-text{min-height:3.1em;margin:0;font-size:16px;line-height:1.55}
+.stepper{display:flex;gap:var(--space-2);margin-top:var(--space-4)}
+.stepper .btn-primary{flex:1}
+
+/* ===== Ab Tablet: asymmetrisch, Bühne + Rand ===== */
+@media (min-width:760px){
+ .workspace{grid-template-columns:minmax(0,1fr) minmax(260px,320px);align-items:start;gap:var(--space-7)}
+ .stage{padding:var(--space-7) var(--space-6) var(--space-7) var(--space-7)}
+ .margin{position:sticky;top:var(--space-5);min-height:280px;padding-left:var(--space-5);border-left:2px solid var(--margin-line)}
+}
+@media (min-width:760px) and (max-width:1023.98px){
+ .topbar{gap:var(--space-3)}
+ .ops{order:3;flex-basis:100%}
+ .op{flex:1;justify-content:center}
+ .workspace{grid-template-columns:minmax(0,1fr) 248px;gap:var(--space-5)}
+ .stage{padding:var(--space-6) var(--space-5) var(--space-6) var(--space-6)}
+ .margin{padding-left:var(--space-4)}
+ .note{padding:var(--space-4)}
+}
+@media (min-width:1100px){
+ .stage{padding-left:88px}
+}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{
+ body{background:#fff}.app{padding:0;max-width:none}
+ .topbar,.margin,.answer-form,#regenerate{display:none!important}
+ .workspace{display:block}.stage{box-shadow:none;padding:0}
+ .cell.pending{color:inherit!important}.cell.focus,.cell.now{background:none}.solution.stepping .cell{color:var(--grid-ink)}.grid-arrow.pending{opacity:1}
+}
+</style>
+<style>
+/* ===== Handy-Variante (< 760 px) ===== */
+@media screen and (max-width:759.98px){
+/* Rechenwerkstatt – Handy-Variante (< 760 px).
+   Eingebettet als @media screen and (max-width: 759.98px).
+   Tokens und Komponenten: design-system/MASTER.md
+
+   Aufbau
+   1. Maße und Platzreserve für die untere Leiste (--dock)
+   2. Obere Leiste: Marke, Rechenarten (4 gleich breite Felder), Einstellungen
+   3. Einstellungen als Bottom-Sheet (abgedunkelter Hintergrund = Summary-Pseudo-Element,
+      ein Tipp darauf schließt das <details> ohne JavaScript)
+   4. Bühne: große Aufgabe
+   5. Antwortleiste unten im Daumenbereich (Rückmeldung direkt darüber)
+   6. Lösungsraster (--sq 29 px, Rechnung und Kontrolle untereinander)
+   7. Randspalte: Heftrand-Linie links; im Schrittmodus wird die Schritt-Karte
+      zum kompakten Sheet unten, das Raster bleibt darüber sichtbar
+   8. Querformat (niedrige Höhe): Bühne + Rand nebeneinander, Leiste einzeilig
+   9. Bewegung reduzieren, Druck */
+
+/* ===== 1. Maße ===== */
+:root{
+ --sq:29px;
+ --gutter:12px;
+ /* Höhe, die unten frei bleiben muss (ohne sicheren Rand). Wird je nach Zustand umgeschaltet. */
+ --dock:100px;
+ --sheet-shadow:0 -10px 32px rgb(20 27 45 / .16);
+ --scrim:rgb(20 27 45 / .45);
+}
+:root:has(.answer-form .feedback.is-correct){--dock:168px}
+:root:has(.answer-form .feedback.is-wrong){--dock:244px}
+html{
+ scroll-padding-top:var(--space-3);
+ /* Fokus per Tab und scrollIntoView landen nie unter der Leiste */
+ scroll-padding-bottom:calc(var(--dock) + env(safe-area-inset-bottom) + var(--space-3));
+}
+/* Fokusring kräftiger als auf dem Desktop: Akzent hat > 3:1 gegen Weiß und Hintergrund */
+:focus-visible{outline-color:var(--accent)}
+.brand,.op,.btn,.icon-btn,.settings-toggle{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+
+.app{
+ padding:var(--space-3) max(var(--gutter),env(safe-area-inset-right)) calc(var(--dock) + env(safe-area-inset-bottom) + var(--space-5)) max(var(--gutter),env(safe-area-inset-left));
+}
+
+/* ===== 2. Obere Leiste ===== */
+.topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4)}
+.brand{grid-area:1/1;min-width:0;min-height:44px;margin-right:0}
+.brand-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.settings{grid-area:1/2;position:static;min-width:0}
+.ops{grid-area:2/1/3/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:var(--r-m)}
+.op{flex-direction:column;justify-content:center;gap:3px;min-width:0;min-height:58px;padding:6px 2px;border-radius:10px;font-size:12px;line-height:1.15;text-align:center}
+.op-symbol{width:26px;height:26px;font-size:17px}
+.op-name{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Sehr schmal: kindgerechte Kurznamen. Der volle Name bleibt für Screenreader
+   erhalten (font-size:0), der Kurzname hat leeren Alternativtext. */
+@media (max-width:479.98px),(orientation:landscape) and (max-height:500px) and (max-width:699.98px){
+ .op-name{font-size:0}
+ .op-name::after{font-size:13px}
+ .op[data-op="add"] .op-name::after{content:"Plus";content:"Plus" / ""}
+ .op[data-op="sub"] .op-name::after{content:"Minus";content:"Minus" / ""}
+ .op[data-op="mul"] .op-name::after{content:"Mal";content:"Mal" / ""}
+ .op[data-op="div"] .op-name::after{content:"Geteilt";content:"Geteilt" / ""}
+}
+
+.settings-toggle{min-width:44px;max-width:100%;padding:0 14px;font-size:13px}
+.settings-summary{display:block;max-width:calc(100vw - 284px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:359.98px){
+ .settings-summary{display:none}
+ .settings-toggle{width:44px;padding:0;justify-content:center}
+}
+
+/* ===== 3. Einstellungen als Bottom-Sheet ===== */
+/* Abgedunkelter Hintergrund: gehört zum <summary>, ein Tipp darauf schließt das Sheet. */
+.settings[open]>.settings-toggle::before{content:"";position:fixed;inset:0;z-index:50;background:var(--scrim);cursor:default;animation:rw-fade var(--t) var(--ease)}
+.settings-panel{
+ position:fixed;inset:auto 0 0 0;z-index:51;
+ width:auto;max-width:560px;margin-inline:auto;
+ max-height:min(86dvh,620px);overflow-y:auto;overscroll-behavior:contain;
+ gap:var(--space-4);
+ padding:var(--space-2) max(var(--space-5),env(safe-area-inset-right)) calc(var(--space-5) + env(safe-area-inset-bottom)) max(var(--space-5),env(safe-area-inset-left));
+ border:0;border-radius:var(--r-l) var(--r-l) 0 0;
+ box-shadow:var(--sheet-shadow);
+ animation:rw-sheet var(--t) var(--ease);
+}
+/* Griffleiste */
+.settings-panel::before{content:"";justify-self:center;width:40px;height:4px;margin-top:2px;border-radius:2px;background:var(--line-strong)}
+.settings-head{margin:-8px -10px -4px 0}
+.settings-head h2{font-size:17px}
+:root:has(.settings[open]){overflow:hidden}
+@keyframes rw-sheet{from{transform:translateY(100%)}to{transform:none}}
+@keyframes rw-fade{from{opacity:0}to{opacity:1}}
+
+/* ===== 4. Bühne ===== */
+.workspace{gap:var(--space-5)}
+.stage{padding:var(--space-4) var(--space-4) var(--space-5) var(--space-5)}
+.stage-head{margin-bottom:var(--space-3)}
+.stage-title{min-width:0;line-height:1.35;letter-spacing:.08em}
+#regenerate{flex:none;padding:0 14px;font-size:14px}
+/* Sehr schmal: nur das Symbol, der Name „Neue Aufgabe“ bleibt als zugänglicher Name erhalten */
+@media (max-width:359.98px){
+ #regenerate{width:44px;padding:0;gap:0;font-size:0}
+ #regenerate .icon{width:20px;height:20px}
+}
+.expression{margin:0;font-size:clamp(32px,9.2vw,56px);line-height:1.12}
+/* Drei und mehr Zahlen: etwas kleiner, damit die Aufgabe nicht zu lang wird */
+.expression:has(.num~.num~.num){font-size:clamp(30px,8.6vw,46px)}
+
+/* ===== 5. Antwortleiste unten ===== */
+/* --keyboard-inset kann per visualViewport gesetzt werden (Wunsch an index.html), damit die
+   Leiste auf iOS über der Bildschirmtastatur sitzt. Ohne den Wert gilt 0. */
+.answer-form{
+ position:fixed;left:0;right:0;bottom:var(--keyboard-inset,0px);z-index:20;
+ display:flex;flex-direction:column;gap:var(--space-2);
+ padding:var(--space-2) max(var(--gutter),env(safe-area-inset-right),calc((100% - 600px) / 2)) max(var(--space-3),env(safe-area-inset-bottom)) max(var(--gutter),env(safe-area-inset-left),calc((100% - 600px) / 2));
+ background:var(--surface);
+ border-top:1px solid var(--line);
+ box-shadow:0 -6px 24px rgb(20 27 45 / .07);
+}
+.answer-fields{flex-wrap:nowrap;gap:var(--space-2)}
+.field-answer{flex:1 1 auto;min-width:0;max-width:none;gap:2px}
+.field-rest{flex:0 0 92px;gap:2px}
+.answer-form .field-label{font-size:12px}
+.answer{min-height:54px;padding:0 12px;font-size:24px}
+.btn-check{flex:none;min-height:54px;padding:0 22px}
+/* Rückmeldung direkt über dem Eingabefeld */
+.feedback{order:-1;max-width:none;margin:0;padding:var(--space-2) var(--space-3);gap:var(--space-2) var(--space-3);font-size:14px;line-height:1.4}
+.feedback>.icon{width:20px;height:20px}
+.feedback-text{flex:1 1 12em}
+.feedback.is-correct .feedback-text{flex-basis:6.5em}
+.feedback .btn{margin-left:auto;padding:0 14px;font-size:14px}
+
+/* ===== 6. Lösungsraster ===== */
+.solution{margin-top:var(--space-5);padding-top:var(--space-4)}
+.solution-head{margin-bottom:var(--space-3)}
+.papers{flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:var(--space-4)}
+.paper-shell{overscroll-behavior-x:contain;padding-bottom:6px}
+.cell{font-size:17px}
+.cell.operator{font-size:21px}
+.cell.carry{font-size:13px}
+.cell.head{font-size:12px}
+.cell.word{padding-left:2px;font-size:14px}
+/* Division: Die Kontrolle steht unter der Rechnung. Ihr Inhalt ist rechtsbündig, darum
+   beginnt ihr Kasten rechts (rtl-Scrollen), und überzählige Leerzeilen entfallen
+   (sie dienen auf dem Desktop nur der gleichen Höhe nebeneinander). */
+.paper[data-g="1"] .paper-shell{direction:rtl}
+.paper[data-g="1"] .paper-grid{direction:ltr}
+.paper[data-g="1"] .math-row:not(:has(.cell:not(:empty))) ~ .math-row:not(:has(.cell:not(:empty))){display:none}
+/* Zurückgenommene Ziffern im Schrittmodus: noch ≥ 4.5:1 auf Weiß */
+.solution.stepping .cell:not(.focus):not(.now):not(.pending){color:var(--ink-3)}
+
+/* ===== 7. Randspalte ===== */
+.margin{gap:var(--space-3);padding-left:var(--space-3);border-left:2px solid var(--margin-line)}
+.note-steps{order:-1}
+.note{padding:var(--space-3) var(--space-4) var(--space-4)}
+.note-title-row{margin:-4px -8px var(--space-2) 0}
+.note-actions{margin-top:var(--space-3)}
+
+/* Schrittmodus im Hochformat: Schritt-Karte als Sheet unten, Raster darüber */
+@media not all and (orientation:landscape) and (max-height:500px){
+ :root:has(.note-steps .stepper){--dock:276px}
+ /* Die Antwortleiste rückt während der Schritte zurück unter die Aufgabe. */
+ :root:has(.note-steps .stepper) .answer-form{position:static;z-index:auto;margin-top:var(--space-4);padding:0;background:none;border:0;box-shadow:none}
+ :root:has(.note-steps .stepper) .feedback{order:0}
+ .note-steps:has(.stepper){
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  max-width:640px;margin-inline:auto;
+  display:grid;grid-template-columns:minmax(0,1fr);align-items:center;column-gap:var(--space-3);
+  max-height:min(50dvh,360px);overflow-y:auto;overscroll-behavior:contain;
+  padding:var(--space-3) max(var(--space-4),env(safe-area-inset-right)) max(var(--space-2),env(safe-area-inset-bottom)) max(30px,calc(env(safe-area-inset-left) + 18px));
+  border:0;border-radius:var(--r-l) var(--r-l) 0 0;
+  /* Heftrand-Linie als dezente senkrechte Linie im Sheet */
+  background:linear-gradient(var(--margin-line),var(--margin-line)) 15px 0/2px 100% no-repeat,var(--surface);
+  box-shadow:var(--sheet-shadow);
+ }
+ .note-steps:has(.stepper)>.note-title-row{margin:-4px -8px 0 0}
+ .note-steps:has(.stepper) .step-text{min-height:4.65em;font-size:15px}
+ .note-steps:has(.stepper)>.stepper{margin-top:var(--space-2)}
+ .note-steps:has(.stepper)>.note-actions{justify-content:center;margin-top:0}
+ .note-steps:has(.stepper)>.note-fine{display:none}
+ @media (min-width:430px){
+  .note-steps:has(.stepper){grid-template-columns:minmax(0,1fr) auto}
+  .note-steps:has(.stepper)>.note-title-row,.note-steps:has(.stepper)>.progress,.note-steps:has(.stepper)>.step-text{grid-column:1/-1}
+  .note-steps:has(.stepper)>.note-actions{margin-top:var(--space-2)}
+  :root:has(.note-steps .stepper){--dock:228px}
+ }
+}
+
+/* ===== Mittlere Breiten (Hochformat 700–759 px): Rechenarten wieder mit Symbol daneben ===== */
+@media (min-width:700px){
+ .op{flex-direction:row;gap:8px;min-height:48px;padding:0 12px 0 6px;border-radius:999px;font-size:14px}
+ .ops{border-radius:999px}
+ .op-symbol{width:28px;height:28px;font-size:18px}
+}
+
+/* ===== 8. Querformat mit wenig Höhe ===== */
+@media (orientation:landscape) and (max-height:500px){
+ :root{--dock:66px;--sq:28px}
+ :root:has(.answer-form .feedback.is-correct){--dock:122px}
+ :root:has(.answer-form .feedback.is-wrong){--dock:150px}
+ .app{padding-top:var(--space-2)}
+ .topbar{display:flex;flex-wrap:nowrap;gap:var(--space-2);margin-bottom:var(--space-3)}
+ .brand{flex:none}
+ .brand-name{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ .ops{display:flex;flex:1 1 auto;min-width:0;border-radius:999px}
+ .op{flex:1 1 0;flex-direction:row;gap:6px;min-height:44px;padding:0 10px 0 6px;border-radius:999px;font-size:13px}
+ .settings{flex:none;margin-left:auto}
+ .settings-summary{display:none}
+ .settings-toggle{width:44px;padding:0;justify-content:center}
+
+ .workspace{grid-template-columns:minmax(0,1fr) minmax(220px,36%);align-items:start;gap:var(--space-4)}
+ .stage{padding:var(--space-3) var(--space-4) var(--space-4) var(--space-5)}
+ .stage-head{margin-bottom:var(--space-2)}
+ .expression,.expression:has(.num~.num~.num){font-size:clamp(28px,10vh,42px)}
+ .margin{position:sticky;top:var(--space-2);max-height:calc(100dvh - var(--dock) - env(safe-area-inset-bottom) - var(--space-4));overflow-y:auto;overscroll-behavior:contain}
+
+ .answer-form{padding-top:6px;padding-bottom:max(6px,env(safe-area-inset-bottom))}
+ .answer-form .field-label{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+ .answer,.btn-check{min-height:48px}
+ .answer{font-size:22px}
+ .field-rest{flex-basis:84px}
+
+ /* Schrittmodus: Die Schritt-Karte steht rechts neben dem Raster. Der Fehlerhinweis ist dann
+    erledigt (die Karte erklärt genau diese Stelle) und gibt die knappe Höhe frei. */
+ :root:has(.note-steps .stepper){--dock:66px}
+ :root:has(.note-steps .stepper) .answer-form .feedback{display:none}
+ .note-steps:has(.stepper)>.note-fine{display:none}
+ .note-steps .step-text{font-size:15px}
+ .note-steps:has(.stepper)>.note-actions{margin-top:var(--space-1)}
+
+ .settings-panel{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--space-4);row-gap:var(--space-3);max-width:620px;max-height:calc(100dvh - var(--space-3))}
+ .settings-panel::before,.settings-head{grid-column:1/-1}
+}
+
+/* ===== 9. Bewegung und Druck ===== */
+@media (prefers-reduced-motion:reduce){
+ .settings-panel,.settings[open]>.settings-toggle::before{animation:none}
+}
+}
 </style>
 </head>
 <body>
-<main class="app">
-<header class="hero"><h1 id="title">Schriftliche Addition</h1></header>
-<nav class="operation-nav" id="pages" aria-label="Rechenart wählen">
-<a class="nav-link" href="#addition" data-op="add"><span class="nav-symbol">+</span><span class="nav-name">Addition</span></a>
-<a class="nav-link" href="#subtraktion" data-op="sub"><span class="nav-symbol">−</span><span class="nav-name">Subtraktion</span></a>
-<a class="nav-link" href="#multiplikation" data-op="mul"><span class="nav-symbol">·</span><span class="nav-name">Multiplikation</span></a>
-<a class="nav-link" href="#division" data-op="div"><span class="nav-symbol">:</span><span class="nav-name">Division</span></a>
-</nav>
-<section class="settings" aria-label="Aufgabe einstellen">
-<div class="settings-grid">
-<label><span class="label">Zahlenraum bis</span><select id="maximum" class="select"><option value="1000">1 000</option><option value="10000">10 000</option><option value="100000" selected>100 000</option><option value="1000000">1 000 000</option></select></label>
-<label><span class="label">Schwierigkeit</span><select id="difficulty" class="select"><option value="easy">Leicht</option><option value="medium" selected>Normal</option><option value="hard">Knifflig</option></select></label>
-<label id="terms-area"><span class="label">Anzahl der Zahlen</span><select id="terms" class="select"><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
-</div>
-<div class="settings-bottom"><label id="rest-area" class="toggle hidden"><input id="allow-rest" type="checkbox"> Mit Rest</label><div class="settings-actions"><button class="btn btn-primary" id="regenerate" type="button">↻ Neue Aufgabe</button></div></div>
-</section>
-<section class="tasks" id="tasks" aria-label="Aktuelle Aufgabe"></section>
+<div class="app">
+<header class="topbar">
+ <a class="brand" href="#addition"><span class="brand-mark" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 6v12M6 12h12"/></svg></span><span class="brand-name">Rechenwerkstatt</span></a>
+ <nav class="ops" id="pages" aria-label="Rechenart wählen">
+  <a class="op" href="#addition" data-op="add"><span class="op-symbol" aria-hidden="true">+</span><span class="op-name">Addition</span></a>
+  <a class="op" href="#subtraktion" data-op="sub"><span class="op-symbol" aria-hidden="true">−</span><span class="op-name">Subtraktion</span></a>
+  <a class="op" href="#multiplikation" data-op="mul"><span class="op-symbol" aria-hidden="true">·</span><span class="op-name">Multiplikation</span></a>
+  <a class="op" href="#division" data-op="div"><span class="op-symbol" aria-hidden="true">:</span><span class="op-name">Division</span></a>
+ </nav>
+ <details class="settings" id="settings">
+  <summary class="settings-toggle"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></svg><span class="visually-hidden">Einstellungen: </span><span class="settings-summary" id="settings-summary">Einstellungen</span></summary>
+  <div class="settings-panel" role="group" aria-label="Aufgabe einstellen">
+   <div class="settings-head"><h2>Aufgabe einstellen</h2><button class="icon-btn" type="button" id="settings-close" aria-label="Einstellungen schließen"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+   <label class="field"><span class="field-label">Zahlenraum bis</span><select id="maximum" class="select"><option value="1000">1 000</option><option value="10000">10 000</option><option value="100000" selected>100 000</option><option value="1000000">1 000 000</option></select></label>
+   <label class="field"><span class="field-label">Schwierigkeit</span><select id="difficulty" class="select"><option value="easy">Leicht</option><option value="medium" selected>Normal</option><option value="hard">Knifflig</option></select></label>
+   <label class="field" id="terms-area"><span class="field-label">Anzahl der Zahlen</span><select id="terms" class="select"><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
+   <label class="switch hidden" id="rest-area"><input id="allow-rest" type="checkbox"><span>Aufgaben mit Rest</span></label>
+  </div>
+ </details>
+</header>
+<main class="workspace">
+ <section class="stage" aria-labelledby="title">
+  <div class="stage-head"><h1 class="stage-title" id="title">Schriftliche Addition</h1><button class="btn btn-ghost" id="regenerate" type="button"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Neue Aufgabe</button></div>
+  <div id="task"></div>
+ </section>
+ <aside class="margin" id="margin" aria-label="Hilfe und Lösungsschritte"></aside>
 </main>
+</div>
 <script>
 (()=>{'use strict';
 const $=s=>document.querySelector(s),names={add:'Addition',sub:'Subtraktion',mul:'Multiplikation',div:'Division'},symbols={add:'+',sub:'−',mul:'·',div:':'},hashes={addition:'add',subtraktion:'sub',multiplikation:'mul',division:'div'};
 const places=['Einer','Zehner','Hunderter','Tausender','Zehntausender','Hunderttausender','Millionen'];
-const fmt=n=>String(Number(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' '),rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,esc=v=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt=n=>String(Number(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' '),rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,esc=v=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const state={op:'add',max:100000,difficulty:'medium',terms:2,allowRest:false,tasks:[]};
 const dig=(n,p)=>Math.floor(n/10**p)%10;
 function addDetail(numbers){
@@ -69,11 +477,25 @@ function addDetail(numbers){
  return {n,carries,carryAt,outerCarry:carry,steps};
 }
 function subDetail(a,b){
- const n=Math.max(String(a).length,String(b).length);let A=String(a).padStart(n,'0').split('').map(Number),original=A.slice(),B=String(b).padStart(n,'0').split('').map(Number),steps=[],borrows=0;
- for(let i=n-1;i>=0;i--){let from=-1;if(A[i]<B[i]){from=i-1;while(from>=0&&A[from]===0)from--;if(from<0)throw Error('Ungültige Subtraktion');A[from]--;for(let j=from+1;j<i;j++)A[j]=9;A[i]+=10;borrows++}const extra=from<0?'':' Dafür entbündeln.';steps.push(`${places[n-i-1]||'Stelle'}: ${A[i]} − ${B[i]} = ${A[i]-B[i]}.${extra}`)}
- return {original,changed:A,borrows,steps,n};
+ // Subtrahieren durch Ergänzen: die untere Zahl wird stellenweise bis zur oberen aufgefüllt.
+ const n=Math.max(String(a).length,String(b).length);let carry=0,steps=[],carryAt=[],borrows=0;
+ for(let p=0;p<n;p++){
+  const x=dig(a,p),y=dig(b,p),s=y+carry,next=x<s?1:0,r=x+10*next-s;
+  carryAt[p]=carry;if(next)borrows++;
+  steps.push(`${places[p]||'Stelle'}: ${carry?`${y} + ${carry} (Übertrag) = ${s}. `:''}${next?`${x} ist kleiner als ${s}, also mit ${x+10} rechnen: `:''}${s} + ${r} = ${x+10*next}. ${p>=String(a-b).length?`Eine 0 ganz vorne schreibt man nicht${next?', aber 1 übertragen':''}.`:`${r} schreiben${next?', 1 übertragen':''}.`}`);
+  carry=next;
+ }
+ if(carry)throw Error('Ungültige Subtraktion');
+ return {n,borrows,carryAt,steps};
 }
-function multDetail(a,b){let digits=String(b).split('').reverse().map(Number),partials=[],steps=[];digits.forEach((d,i)=>{let factor=d*10**i,p=a*factor;partials.push(p);steps.push(`${fmt(a)} · ${fmt(factor)} = ${fmt(p)}.`)});if(partials.length>1)steps.push(`Teilprodukte addieren: ${partials.map(fmt).join(' + ')} = ${fmt(a*b)}.`);return {partials,steps}}
+function multDetail(a,b){
+ const bd=String(b).split('').map(Number),L=bd.length,parts=[],steps=[];
+ bd.forEach((d,i)=>{const shift=L-1-i,value=a*d;parts.push({d,shift,value,str:String(value)});steps.push(`${fmt(a)} · ${d} = ${fmt(value)}. Die letzte Ziffer steht in der ${places[shift]||'passenden '}spalte.`)});
+ const total=a*b,len=String(total).length,carryAt=[];let carry=0;
+ for(let p=0;p<len;p++){carryAt[p]=carry;let sum=carry;parts.forEach(q=>{const k=p-q.shift;if(k>=0&&k<q.str.length)sum+=Number(q.str[q.str.length-1-k])});carry=Math.floor(sum/10)}
+ if(L>1)steps.push(`Die Zeilen Spalte für Spalte addieren, Überträge klein unter die letzte Zeile: ${fmt(total)}.`);
+ return {parts,steps,carryAt,carries:carryAt.some(Boolean)};
+}
 function divDetail(a,b){const chars=String(a).split('').map(Number);let remainder=0,started=false,q='',rows=[],steps=[];
  for(let i=0;i<chars.length;i++){let previous=remainder,part=previous*10+chars[i];if(!started&&part<b){remainder=part;continue}started=true;let digit=Math.floor(part/b),subtract=digit*b;remainder=part-subtract;q+=digit;rows.push({i,part,subtract,remainder,digit,previous});steps.push(`${part} : ${b} = ${digit}, denn ${digit} · ${b} = ${subtract}. Rest: ${remainder}.`)}
  if(+q!==Math.floor(a/b)||remainder!==a%b)throw Error('Ungültige Division');return {rows,steps,remainder,quotient:+q};
@@ -130,57 +552,212 @@ function generator(type){let best;
  }
  return best||({add:{numbers:[423,312],result:735},sub:{numbers:[900,210],result:690},mul:{a:123,b:4,result:492},div:{a:936,b:4,result:234,remainder:0}}[type]);
 }
+/* ===== Kästchenraster ===== */
 function blank(cols){return Array.from({length:cols},()=>({text:''}))}
-function put(row,at,text,klass=''){for(let j=0;j<String(text).length;j++){const col=at+j;if(col>=0&&col<row.length)row[col]={text:String(text)[j],klass}}}
+function put(row,at,text,klass='',span=1){const s=String(text);if(span>1){if(at>=0&&at<row.length){row[at]={text:s,klass,span};for(let k=1;k<span&&at+k<row.length;k++)row[at+k]={skip:true}}return}for(let j=0;j<s.length;j++){const col=at+j;if(col>=0&&col<row.length)row[col]={text:s[j],klass}}}
 function putRight(row,text,ending,klass=''){put(row,ending-String(text).length+1,String(text),klass)}
-function line(row,first,last){for(let i=Math.max(0,first);i<=Math.min(row.length-1,last);i++)row[i]={...row[i],line:true}}
-function htmlGrid(rows,cols){return `<div class="paper-shell"><div class="paper-grid" style="--columns:${cols}" role="img" aria-label="Schriftliche Rechnung auf kariertem Papier">${rows.map(row=>`<div class="math-row">${row.map(cell=>`<div class="cell ${esc(cell.klass||'')} ${cell.struck?'has-strike':''} ${cell.line?'underline':''}">${esc(cell.text||'')}</div>`).join('')}</div>`).join('')}</div></div>`}
+function line(row,first,last,kind='line'){for(let i=Math.max(0,first);i<=Math.min(row.length-1,last);i++)row[i]={...row[i],[kind]:true}}
+// Schrittmarke: Zelle erscheint erst ab Schritt s (Schritt-für-Schritt-Ansicht).
+function stamp(row,s){row.forEach(c=>{if(c.text)c.s=s})}
+const shortPlaces=['E','Z','H','T','ZT','HT','M'];
+function headerRow(cols,digits){const row=blank(cols);for(let p=0;p<digits;p++)row[cols-1-p]={text:shortPlaces[p]||'',klass:'head'};line(row,cols-digits,cols-1);return row}
+function resultRow(cols,value,klass='result'){const row=blank(cols),s=String(value);putRight(row,s,cols-1,klass);line(row,cols-s.length,cols-1,'double');return row}
+function gridHtml(grid,g){
+ const cell=(c,r,i)=>c.skip?'':`<div class="cell ${esc(c.klass||'')}${c.line?' underline':''}${c.double?' double':''}" data-r="${r}" data-c="${i}"${c.s!=null?` data-s="${c.s}"`:''}${c.span>1?` style="grid-column:span ${c.span};width:calc(var(--sq) * ${c.span})"`:''}>${esc(c.text||'')}</div>`;
+ return `<figure class="paper" data-g="${g}">${grid.label?`<figcaption class="paper-label">${esc(grid.label)}</figcaption>`:''}<div class="paper-shell"><div class="paper-grid" style="--columns:${grid.cols};--rows:${grid.rows.length}" role="img" aria-label="${esc(grid.aria||'Schriftliche Rechnung')}">${grid.rows.map((row,r)=>`<div class="math-row">${row.map((c,i)=>cell(c,r,i)).join('')}</div>`).join('')}${grid.overlay||''}</div></div></figure>`;
+}
+// Jede Layout-Funktion liefert {grids:[{rows,cols,overlay,label,aria}], steps:[{text,g,cols,rows,cells}]}.
 function additionLayout(t){
- const nums=t.numbers,d=addDetail(nums),width=Math.max(String(t.result).length,...nums.map(x=>String(x).length)),cols=width+1,rows=[];
- if(d.carries){const row=blank(cols);for(let p=0;p<d.n;p++)if(d.carryAt[p])put(row,cols-1-p,d.carryAt[p],'carry');if(d.outerCarry&&String(t.result).length>d.n)put(row,cols-1-d.n,d.outerCarry,'carry');rows.push(row)}
- nums.forEach((n,i)=>{let row=blank(cols);if(i>0)put(row,0,'+','operator');putRight(row,n,cols-1);if(i===nums.length-1)line(row,0,cols-1);rows.push(row)});
- const result=blank(cols);putRight(result,t.result,cols-1,'result');rows.push(result);
- return htmlGrid(rows,cols)+stepsHtml(d.steps);
+ const nums=t.numbers,d=addDetail(nums),len=String(t.result).length,width=Math.max(len,...nums.map(x=>String(x).length)),cols=width+1,rows=[headerRow(cols,width)];
+ nums.forEach((n,i)=>{const row=blank(cols);if(i>0)put(row,0,'+','operator');putRight(row,n,cols-1);if(i===nums.length-1)line(row,0,cols-1);rows.push(row)});
+ if(d.carryAt.some(Boolean)){const row=blank(cols);for(let p=1;p<d.n;p++)if(d.carryAt[p]){put(row,cols-1-p,d.carryAt[p],'carry');row[cols-1-p].s=p-1}rows.push(row)}
+ const res=resultRow(cols,t.result);for(let p=0;p<len;p++)res[cols-1-p].s=Math.min(p,d.n-1);rows.push(res);
+ return {grids:[{rows,cols,aria:`${nums.join(' plus ')} gleich ${t.result}`}],steps:d.steps.map((text,p)=>({text,g:0,cols:[cols-1-p]}))};
 }
-function oneSubtractionGrid(a,b){
- const result=a-b,d=subDetail(a,b),width=Math.max(String(a).length,String(b).length,String(result).length),cols=width+1,rows=[],top=blank(cols);
- putRight(top,a,cols-1);
- if(d.borrows){const correction=blank(cols);for(let i=0;i<d.n;i++){const col=cols-d.n+i,original=d.original[i],updated=d.changed[i];if(original!==updated&&top[col]&&top[col].text!==''){top[col].struck=true;correction[col]={text:String(updated),klass:'correction'}}}rows.push(correction)}
- rows.push(top);let second=blank(cols);put(second,0,'−','operator');putRight(second,b,cols-1);line(second,0,cols-1);rows.push(second);
- let answer=blank(cols);putRight(answer,result,cols-1,'result');rows.push(answer);
- return {grid:htmlGrid(rows,cols),steps:d.steps};
+function oneSubtraction(a,b,off){
+ const d=subDetail(a,b),r=a-b,len=String(r).length,cols=d.n+1,rows=[headerRow(cols,d.n)],top=blank(cols);
+ putRight(top,a,cols-1);rows.push(top);
+ const second=blank(cols);put(second,0,'−','operator');putRight(second,b,cols-1);line(second,0,cols-1);rows.push(second);
+ if(d.borrows){const row=blank(cols);for(let p=1;p<d.n;p++)if(d.carryAt[p]){put(row,cols-1-p,d.carryAt[p],'carry');row[cols-1-p].s=off+p-1}rows.push(row)}
+ const res=resultRow(cols,r);for(let p=0;p<len;p++)res[cols-1-p].s=off+p;rows.push(res);
+ return {grid:{rows,cols,aria:`${a} minus ${b} gleich ${r}`},steps:d.steps,cols};
 }
-function subtractionLayout(t){let current=t.numbers[0],results=[],steps=[];
- for(let i=1;i<t.numbers.length;i++){const b=t.numbers[i],r=oneSubtractionGrid(current,b);results.push(`<div class="solution-calc">${t.numbers.length>2?`<p class="calc-label">${i}. Rechnung</p>`:''}${r.grid}</div>`);steps.push(...r.steps.map(x=>`${i}. Rechnung – ${x}`));current-=b}
- return results.join('')+stepsHtml(steps);
+function subtractionLayout(t){
+ let current=t.numbers[0];const grids=[],steps=[],many=t.numbers.length>2;
+ for(let i=1;i<t.numbers.length;i++){const b=t.numbers[i],r=oneSubtraction(current,b,steps.length),g=grids.length;r.grid.label=many?`${i}. Rechnung`:'';grids.push(r.grid);r.steps.forEach((text,p)=>steps.push({text:many?`${i}. Rechnung – ${text}`:text,g,cols:[r.cols-1-p]}));current-=b}
+ return {grids,steps};
 }
-function multiplicationLayout(t){const d=multDetail(t.a,t.b),head=`${fmt(t.a)} · ${fmt(t.b)}`,maxDigits=Math.max(String(t.result).length,...d.partials.map(p=>String(p).length)),cols=Math.max(head.length+1,maxDigits+2),rows=[],top=blank(cols);putRight(top,head,cols-1);rows.push(top);
- d.partials.forEach((p,i)=>{let r=blank(cols);putRight(r,p,cols-1);if(i>0)put(r,Math.max(0,cols-1-String(p).length),'+','operator');if(i===d.partials.length-1)line(r,0,cols-1);rows.push(r)});
- if(d.partials.length===1)line(rows[0],0,cols-1);let result=blank(cols);putRight(result,t.result,cols-1,'result');rows.push(result);return htmlGrid(rows,cols)+stepsHtml(d.steps);
+function multiplicationLayout(t){
+ const d=multDetail(t.a,t.b),sa=String(t.a),sb=String(t.b),total=String(t.result),headLen=sa.length+1+sb.length,cols=Math.max(headLen,total.length),start=cols-headLen,L=d.parts.length,rows=[],top=blank(cols),steps=[],bCol=i=>start+sa.length+1+i;
+ put(top,start,sa);put(top,start+sa.length,'·','operator');put(top,start+sa.length+1,sb);line(top,0,cols-1);rows.push(top);
+ if(L>1){
+  d.parts.forEach((q,i)=>{const row=blank(cols);putRight(row,q.str,cols-1-q.shift);stamp(row,i);rows.push(row);steps.push({text:d.steps[i],g:0,rows:[rows.length-1],cells:[[0,bCol(i)]]})});
+  // Überträge nur in Spalten, in denen Teilprodukte stehen (wie im Buch).
+  const reach=Math.max(...d.parts.map(q=>q.shift+q.str.length)),focus=[];
+  if(d.carryAt.some((c,p)=>p>0&&p<reach&&c)){const row=blank(cols);d.carryAt.forEach((c,p)=>{if(p>0&&p<reach&&c)put(row,cols-1-p,c,'carry')});stamp(row,L);rows.push(row);focus.push(rows.length-1)}
+  line(rows[rows.length-1],0,cols-1);
+  const res=resultRow(cols,total);stamp(res,L);rows.push(res);focus.push(rows.length-1);
+  steps.push({text:d.steps[L],g:0,rows:focus});
+ }else{const res=resultRow(cols,total);stamp(res,0);rows.push(res);steps.push({text:d.steps[0],g:0,rows:[1],cells:[[0,bCol(0)]]})}
+ return {grids:[{rows,cols,aria:`${sa} mal ${sb} gleich ${total}`}],steps};
 }
-function divisionLayout(t){const d=divDetail(t.a,t.b),head=`${fmt(t.a)} : ${t.b} = ${fmt(d.quotient)}${d.remainder?' R '+d.remainder:''}`,cols=Math.max(head.length+2,String(t.a).length+5),rows=[];let top=blank(cols);put(top,1,head);rows.push(top);
- d.rows.forEach((r,index)=>{const end=1+r.i,partlen=String(r.part).length;if(index>0){let current=blank(cols);putRight(current,r.part,end);rows.push(current)}let sub=blank(cols);putRight(sub,r.subtract,end);const start=end-String(r.subtract).length+1;put(sub,Math.max(0,start-1),'−','operator');line(sub,Math.max(0,end-Math.max(partlen,String(r.subtract).length)),end);rows.push(sub)});
- const end=String(t.a).length;let rest=blank(cols);put(rest,end,String(d.remainder),'result');rows.push(rest);return htmlGrid(rows,cols)+stepsHtml(d.steps);
+function divisionLayout(t){
+ const d=divDetail(t.a,t.b),sa=String(t.a),sb=String(t.b),sq=String(d.quotient),rem=d.remainder,sr=String(rem),J=d.rows.length,steps=[];
+ const cols=sa.length+1+sb.length+1+sq.length+(rem?2+sr.length:0),top=blank(cols),rows=[top];let pos=0,restCol=-1;
+ put(top,pos,sa);pos+=sa.length;put(top,pos,':','operator');pos++;put(top,pos,sb);pos+=sb.length;put(top,pos,'=','operator');pos++;
+ const qStart=pos;put(top,pos,sq);for(let j=0;j<sq.length;j++)top[qStart+j].s=j;pos+=sq.length;
+ if(rem){put(top,pos,'Rest','word',2);top[pos].s=J-1;pos+=2;restCol=pos;put(top,pos,sr,'rest');top[pos].s=J-1}
+ d.rows.forEach((r,j)=>{const end=r.i,partlen=String(r.part).length,focus=[];
+  if(j>0){const current=blank(cols);putRight(current,r.part,end);stamp(current,j);rows.push(current);focus.push(rows.length-1)}
+  const sub=blank(cols);putRight(sub,r.subtract,end);line(sub,end-Math.max(partlen,String(r.subtract).length)+1,end);stamp(sub,j);rows.push(sub);focus.push(rows.length-1);
+  steps.push({text:d.steps[j],g:0,rows:focus,cells:[[0,qStart+j]]})});
+ const last=blank(cols);putRight(last,sr,sa.length-1,rem?'rest':'result');stamp(last,J-1);rows.push(last);steps[J-1].rows.push(rows.length-1);
+ let overlay='';
+ if(rem){const y=rows.length-.5,x1=sa.length+.2,x2=restCol+.5;overlay=`<svg class="grid-arrow" data-s="${J-1}" viewBox="0 0 ${cols} ${rows.length}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${x1},${y} ${x2},${y} ${x2},1.2" fill="none" stroke="#2f8fd0" stroke-width="1.6" stroke-linejoin="round" style="vector-effect:non-scaling-stroke"/><polygon points="${x2},.9 ${x2-.15},1.24 ${x2+.15},1.24" fill="#2f8fd0"/></svg>`}
+ // Kontrolle: Quotient · Divisor (+ Rest) ergibt wieder den Dividenden.
+ const prod=String(d.quotient*t.b),headK=sq.length+1+sb.length,sumLen=prod.length+(rem?1+sr.length:0)+1+sa.length,kc=Math.max(4+headK,sumLen),kn=Math.max(rows.length,4),krows=Array.from({length:kn},()=>blank(kc)),ks=kc-headK;
+ put(krows[0],0,'Kontrolle:','word',4);put(krows[0],ks,sq);put(krows[0],ks+sq.length,'·','operator');put(krows[0],ks+sq.length+1,sb);line(krows[0],ks,kc-1);
+ krows[1]=resultRow(kc,prod,'');
+ let q=kc-sumLen;const sum=krows[kn-1];put(sum,q,prod);q+=prod.length;if(rem){put(sum,q,'+','operator');q++;put(sum,q,sr,'rest');q+=sr.length}put(sum,q,'=','operator');q++;put(sum,q,sa);
+ krows.forEach(row=>stamp(row,J));
+ steps.push({text:`Kontrolle: ${fmt(d.quotient)} · ${t.b} = ${fmt(prod)}${rem?`, dazu den Rest: ${fmt(prod)} + ${rem} = ${fmt(t.a)}`:''}.`,g:1,rows:[0,1,kn-1]});
+ return {grids:[{rows,cols,overlay,aria:`${sa} geteilt durch ${sb} gleich ${sq}${rem?' Rest '+sr:''}`},{rows:krows,cols:kc,aria:`Kontrolle: ${sq} mal ${sb} gleich ${prod}${rem?', plus '+sr+' gleich '+sa:''}`}],steps};
 }
-function stepsHtml(steps){return `<details class="step-details"><summary>Rechenschritte erklären</summary><ol class="steps">${steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></details>`}
-function solution(t){let body=state.op==='add'?additionLayout(t):state.op==='sub'?subtractionLayout(t):state.op==='mul'?multiplicationLayout(t):divisionLayout(t);
- const hint=state.op==='sub'?'Bei der Subtraktion sind auch andere Rechenwege und Schreibweisen richtig.':'Dein Rechenweg darf etwas anders aussehen und trotzdem richtig sein.';
- return `<div class="solution"><div class="solution-head">Lösung <span>${fmt(t.result)}${state.op==='div'&&t.remainder?' Rest '+t.remainder:''}</span></div>${body}<p class="method-note">${hint}</p></div>`;
+const layouts={add:additionLayout,sub:subtractionLayout,mul:multiplicationLayout,div:divisionLayout};
+function getLayout(t){return t.layout||(t.layout=layouts[state.op](t))}
+
+/* ===== Symbole (Linien-Icons im Lucide-Stil) ===== */
+const ICONS={bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',steps:'<path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/>',left:'<path d="m15 18-6-6 6-6"/>',right:'<path d="m9 18 6-6-6-6"/>',check:'<path d="M20 6 9 17l-5-5"/>',x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',arrow:'<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',eye:'<path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/>'};
+const icon=n=>`<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+
+/* ===== Hilfe-Leiter und Fehlerhinweise ===== */
+const nf=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ');
+const roundSig=(n,sig)=>{const e=10**Math.max(0,String(n).length-sig);return Math.round(n/e)*e};
+function tipList(t){
+ const first='Erster Schritt: '+getLayout(t).steps[0].text;
+ if(state.op==='add'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die Zahlen stellengerecht untereinander: Einer unter Einer, Zehner unter Zehner. Fang rechts bei den Einern an.',`Überschlag: ${r.map(fmt).join(' + ')} = ${fmt(r.reduce((a,b)=>a+b,0))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
+ if(state.op==='sub'){const r=t.numbers.map(n=>roundSig(n,2));return ['Schreib die größere Zahl oben, Einer unter Einer. Rechne von rechts: Wie viel fehlt von der unteren bis zur oberen Ziffer? Reicht es nicht, rechnest du mit 10 mehr und überträgst 1.',`Überschlag: ${r.map(fmt).join(' − ')} = ${fmt(r.slice(1).reduce((a,b)=>a-b,r[0]))}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
+ if(state.op==='mul'){const a=roundSig(t.a,1),b=roundSig(t.b,1);return ['Multipliziere die erste Zahl nacheinander mit jeder Ziffer der zweiten Zahl. Jede neue Zeile rückt eine Stelle weiter nach rechts. Zum Schluss addierst du alle Zeilen.',`Überschlag: ${fmt(a)} · ${fmt(b)} = ${fmt(a*b)}. Dein Ergebnis sollte in der Nähe liegen.`,first]}
+ const d=divDetail(t.a,t.b);
+ return [`Rechne von links: Wie oft passt ${t.b} in die erste Ziffer oder in die ersten beiden? Dann multiplizieren, abziehen und die nächste Ziffer herunterholen.`,`Dein Ergebnis hat ${String(d.quotient).length} Stellen, denn ${t.b} passt zum ersten Mal in ${d.rows[0].part}.`,first];
 }
-function taskHtml(t){const div=state.op==='div',nums=t.numbers,expr=nums?nums.map(fmt).join(` ${symbols[state.op]} `):`${fmt(t.a)} ${symbols[state.op]} ${fmt(t.b)}`;
- return `<article class="task"><div class="task-top"><strong>Deine Aufgabe</strong></div><div class="expression">${esc(expr)} <span>= ?</span></div><div class="check-row"><label class="input-wrap"><span class="label">Dein Ergebnis</span><input class="answer" type="text" inputmode="numeric" data-field="answer" value="${esc(t.answer)}" placeholder="Ergebnis" aria-label="Dein Ergebnis"></label>${div&&state.allowRest?`<label class="input-wrap rest"><span class="label">Rest</span><input class="answer" type="text" inputmode="numeric" data-field="restAnswer" value="${esc(t.restAnswer)}" placeholder="0" aria-label="Rest"></label>`:''}<button class="btn" type="button" data-action="check">Prüfen</button></div>${t.feedback?`<p class="feedback ${t.feedback}" role="status">${t.feedback==='correct'?'✓ Richtig!':'Prüfe deine Rechnung noch einmal.'}</p>`:''}<button type="button" class="solution-button" data-action="toggle" aria-expanded="${t.show}">${t.show?'▴ Lösung verbergen':'▾ Lösung zeigen'}</button>${t.show?solution(t):''}</article>`;
+function wrongDetail(t){
+ const v=parseValue(t.answer),raw=String(t.answer).trim();
+ if(!Number.isFinite(v))return {text:raw?'Gib nur Ziffern ein, zum Beispiel 1 234.':'Trag zuerst dein Ergebnis ein.'};
+ const a=String(v),b=String(t.result),steps=getLayout(t).steps;
+ if(state.op==='div'){
+  if(v===t.result)return {text:`Das Ergebnis stimmt. Prüfe den Rest: Er muss kleiner als ${t.b} sein.`,step:steps.length-2};
+  if(a.length!==b.length)return {text:`Dein Ergebnis hat ${a.length} Stellen, richtig sind ${b.length}. In welche ersten Ziffern passt ${t.b} zum ersten Mal?`,step:0};
+  let k=0;while(k<a.length&&a[k]===b[k])k++;
+  return {text:`${k===0?'':k===1?'Die erste Ziffer stimmt. ':`Die ersten ${k} Ziffern stimmen. `}Prüfe die ${k+1}. Ziffer.`,step:k};
+ }
+ if(a.length!==b.length)return {text:`Dein Ergebnis hat ${a.length} Stellen, richtig sind ${b.length}.${state.op==='add'?' Hast du den letzten Übertrag aufgeschrieben?':''}`};
+ let p=0;while(p<a.length&&a[a.length-1-p]===b[b.length-1-p])p++;
+ const ok=p===0?'':p===1?'Die Einer stimmen schon. ':p===2?'Einer und Zehner stimmen schon. ':`Die letzten ${p} Stellen stimmen schon. `;
+ const columnwise=state.op==='add'||(state.op==='sub'&&t.numbers.length===2);
+ return {text:`${ok}Prüfe die ${places[p]}stelle.`,step:columnwise?Math.min(p,steps.length-1):null};
 }
-function render(){const target=$('#tasks');target.dataset.operation=state.op;target.innerHTML=state.tasks.map(taskHtml).join('')}
-function generate(){state.max=Number($('#maximum').value);state.difficulty=$('#difficulty').value;state.terms=Number($('#terms').value);state.allowRest=$('#allow-rest').checked;state.tasks=[{...generator(state.op),answer:'',restAnswer:'',show:false,feedback:null}];render()}
-function changePage(){state.op=hashes[decodeURIComponent(location.hash.slice(1))]||'add';$('#title').textContent='Schriftliche '+names[state.op];$('#rest-area').classList.toggle('hidden',state.op!=='div');$('#terms-area').classList.toggle('hidden',!['add','sub'].includes(state.op));document.querySelectorAll('.nav-link').forEach(el=>{if(el.dataset.op===state.op)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current')});generate()}
-function parseValue(s){let v=String(s||'').trim().replace(/[.\s\u00a0]/g,'');return /^\d+$/.test(v)?Number(v):NaN}
+
+/* ===== Ansicht ===== */
+const diffNames={easy:'Leicht',medium:'Normal',hard:'Knifflig'};
+function exprHtml(t){const parts=t.numbers||[t.a,t.b];return parts.map(n=>`<span class="num">${nf(n)}</span>`).join(`<span class="opr">${symbols[state.op]}</span>`)+'<span class="eq">= ?</span>'}
+function exprText(t){const parts=t.numbers||[t.a,t.b];return parts.map(fmt).join(` ${symbols[state.op]} `)}
+function feedbackHtml(t){
+ if(t.feedback==='correct')return `<div class="feedback is-correct" role="status">${icon('check')}<p class="feedback-text"><strong>Richtig!</strong> Gut gerechnet.</p><button class="btn btn-primary" type="button" data-action="new">Nächste Aufgabe ${icon('arrow')}</button></div>`;
+ if(t.feedback==='wrong')return `<div class="feedback is-wrong" role="status">${icon('x')}<p class="feedback-text"><strong>Noch nicht.</strong> ${esc(t.detail.text)}</p>${t.detail.step!=null?`<button class="btn" type="button" data-action="goto" data-step="${t.detail.step}">${icon('target')} Diese Stelle zeigen</button>`:''}</div>`;
+ return '';
+}
+function taskHtml(t){
+ const div=state.op==='div',wrong=t.feedback==='wrong';
+ return `<div class="expression" role="text" aria-label="Aufgabe: ${esc(exprText(t))} gleich?">${exprHtml(t)}</div>
+<form class="answer-form" novalidate><div class="answer-fields"><label class="field field-answer"><span class="field-label">Dein Ergebnis</span><input class="answer" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="done" data-field="answer" value="${esc(t.answer)}" placeholder="?"${wrong?' aria-invalid="true"':''}></label>${div&&state.allowRest?`<label class="field field-rest"><span class="field-label">Rest</span><input class="answer" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="done" data-field="restAnswer" value="${esc(t.restAnswer)}" placeholder="0"></label>`:''}<button class="btn btn-primary btn-check" type="submit" data-action="check">Prüfen</button></div>${feedbackHtml(t)}</form>
+${t.show?solutionHtml(t):''}`;
+}
+function solutionHtml(t){const L=getLayout(t);return `<section class="solution" id="solution" aria-labelledby="solution-title"><div class="solution-head"><h2 id="solution-title">Lösung</h2><p class="solution-value">${fmt(t.result)}${state.op==='div'&&t.remainder?' Rest '+t.remainder:''}</p></div><div class="papers">${L.grids.map(gridHtml).join('')}</div></section>`}
+function methodHint(){return state.op==='sub'?'Hier wird durch Ergänzen gerechnet. Auch andere Rechenwege sind richtig.':'Dein Rechenweg darf etwas anders aussehen und trotzdem richtig sein.'}
+function marginHtml(t){
+ const tips=tipList(t),more=t.tip<tips.length;let html=`<section class="note note-help" aria-labelledby="help-title"><h2 class="note-title" id="help-title">${icon('bulb')} Hilfe</h2>`;
+ html+=t.tip?`<ol class="tips">${tips.slice(0,t.tip).map((x,i)=>`<li class="tip"><span class="tip-no" aria-hidden="true">${i+1}</span><p><span class="visually-hidden">Tipp ${i+1}: </span>${esc(x)}</p></li>`).join('')}</ol>`:`<p class="note-text">Rechne zuerst selbst auf Papier. Wenn du feststeckst, hol dir einen Tipp.</p>`;
+ html+=`<div class="note-actions">${more?`<button class="btn btn-soft" type="button" data-action="tip">${icon('bulb')} ${t.tip?'Noch ein Tipp':'Tipp holen'}</button>`:''}${t.show?'':`<button class="btn btn-link" type="button" data-action="steps">${icon('steps')} Lösung Schritt für Schritt</button>`}</div></section>`;
+ if(t.show){
+  const steps=getLayout(t).steps,n=steps.length,k=t.step;
+  html+=`<section class="note note-steps" aria-labelledby="steps-title"><div class="note-title-row"><h2 class="note-title" id="steps-title">${icon('steps')} ${k==null?'Ganze Lösung':`Schritt ${k+1} von ${n}`}</h2><button class="icon-btn" type="button" data-action="hide" aria-label="Lösung ausblenden">${icon('x')}</button></div>`;
+  html+=k==null?`<p class="note-text">Die ganze Rechnung steht im Kästchenraster. Lass sie dir Schritt für Schritt erklären.</p><div class="note-actions"><button class="btn btn-soft" type="button" data-action="steps">${icon('steps')} Schritt für Schritt</button></div>`
+   :`<div class="progress" aria-hidden="true"><span style="width:${(k+1)/n*100}%"></span></div><p class="step-text" aria-live="polite">${esc(steps[k].text)}</p><div class="stepper"><button class="btn btn-soft" type="button" data-action="prev" aria-label="Vorheriger Schritt"${k===0?' disabled':''}>${icon('left')}</button>${k<n-1?`<button class="btn btn-primary" type="button" data-action="next">Weiter ${icon('right')}</button>`:`<button class="btn btn-primary" type="button" data-action="all">Fertig ${icon('check')}</button>`}</div><div class="note-actions"><button class="btn btn-link" type="button" data-action="all">${icon('eye')} Ganze Lösung zeigen</button></div>`;
+  html+=`<p class="note-fine">${methodHint()}</p></section>`;
+ }
+ return html;
+}
+function applyStep(){
+ const t=state.tasks[0],box=document.getElementById('solution');if(!box)return;
+ const k=t.step,step=k==null?null:getLayout(t).steps[k];
+ box.classList.toggle('stepping',k!=null);
+ box.querySelectorAll('[data-s]').forEach(el=>{const s=+el.dataset.s;el.classList.toggle('pending',k!=null&&s>k);el.classList.toggle('now',k!=null&&s===k)});
+ box.querySelectorAll('.focus').forEach(el=>el.classList.remove('focus'));
+ if(!step)return;
+ const fig=box.querySelector(`[data-g="${step.g}"]`);if(!fig)return;
+ const mark=sel=>fig.querySelectorAll(sel).forEach(el=>el.classList.add('focus'));
+ (step.cols||[]).forEach(c=>mark(`.cell[data-c="${c}"]`));(step.rows||[]).forEach(r=>mark(`.cell[data-r="${r}"]`));(step.cells||[]).forEach(([r,c])=>mark(`.cell[data-r="${r}"][data-c="${c}"]`));
+}
+function render(){
+ const ae=document.activeElement,key=ae&&ae.dataset?(ae.dataset.field?`[data-field="${ae.dataset.field}"]`:ae.dataset.action?`[data-action="${ae.dataset.action}"]`:null):null;
+ const t=state.tasks[0];$('#task').innerHTML=taskHtml(t);$('#margin').innerHTML=marginHtml(t);applyStep();document.body.dataset.op=state.op;
+ if(key&&!$('#settings').contains(ae)){const el=document.querySelector(key);if(el&&!el.disabled)el.focus({preventScroll:true});else{const alt=document.querySelector('#margin .stepper .btn-primary, #margin [data-action="steps"]');if(alt)alt.focus({preventScroll:true})}}
+}
+function revealSolution(){const box=document.getElementById('solution');if(box)box.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+function updateSummary(){$('#settings-summary').textContent=`bis ${fmt(state.max)} · ${diffNames[state.difficulty]}${['add','sub'].includes(state.op)?` · ${state.terms} Zahlen`:''}${state.op==='div'&&state.allowRest?' · mit Rest':''}`}
+function generate(focusAnswer){
+ state.max=Number($('#maximum').value);state.difficulty=$('#difficulty').value;state.terms=Number($('#terms').value);state.allowRest=$('#allow-rest').checked;
+ state.tasks=[{...generator(state.op),answer:'',restAnswer:'',feedback:null,detail:null,tip:0,show:false,step:null}];
+ updateSummary();render();if(focusAnswer===true)$('#task [data-field="answer"]').focus();
+}
+function changePage(){state.op=hashes[decodeURIComponent(location.hash.slice(1))]||'add';$('#title').textContent='Schriftliche '+names[state.op];$('#rest-area').classList.toggle('hidden',state.op!=='div');$('#terms-area').classList.toggle('hidden',!['add','sub'].includes(state.op));document.querySelectorAll('.op').forEach(el=>{if(el.dataset.op===state.op)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current')});generate()}
+function parseValue(s){let v=String(s||'').trim().replace(/[.\s  ]/g,'');return /^\d+$/.test(v)?Number(v):NaN}
+function check(){
+ const t=state.tasks[0],v=parseValue(t.answer),r=String(t.restAnswer).trim()===''?0:parseValue(t.restAnswer);
+ const ok=Number.isFinite(v)&&v===t.result&&(!('remainder' in t)||r===t.remainder);
+ t.feedback=ok?'correct':'wrong';t.detail=ok?null:wrongDetail(t);render();
+ const target=ok?$('#task [data-action="new"]'):$('#task [data-field="answer"]');if(target)target.focus();
+}
+// Alle markierten Kästchen zwischen oberen Rand und Scroll-Polster unten bringen (das Polster deckt Leiste bzw. Schritt-Sheet ab).
+function showStepCells(behavior){
+ const cells=[...document.querySelectorAll('#solution .cell.now, #solution .cell.focus')];if(!cells.length)return;
+ const rs=cells.map(c=>c.getBoundingClientRect()),top=Math.min(...rs.map(r=>r.top)),bottom=Math.max(...rs.map(r=>r.bottom));
+ const cs=getComputedStyle(document.documentElement),padT=parseFloat(cs.scrollPaddingTop)||0,padB=parseFloat(cs.scrollPaddingBottom)||0;
+ let dy=0;if(bottom>innerHeight-padB)dy=bottom-(innerHeight-padB);if(top-dy<padT)dy=top-padT;
+ if(Math.abs(dy)>1)window.scrollBy({top:dy,behavior});
+}
+function act(action,btn){
+ const t=state.tasks[0];
+ if(action==='new')return generate(true);
+ if(action==='tip')t.tip++;
+ else if(action==='steps'){t.show=true;t.step=0}
+ else if(action==='all'){t.show=true;t.step=null}
+ else if(action==='hide'){t.show=false;t.step=null}
+ else if(action==='prev')t.step=Math.max(0,t.step-1);
+ else if(action==='next')t.step=Math.min(getLayout(t).steps.length-1,t.step+1);
+ else if(action==='goto'){t.show=true;t.step=Number(btn.dataset.step)}
+ else return;
+ render();
+ // Die markierten Kästchen des aktuellen Schritts ins Bild holen (auf dem Handy liegt sonst das Schritt-Sheet darüber).
+ const motion=matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth';
+ if(t.step!=null&&['steps','goto','prev','next'].includes(action))showStepCells(motion);
+ else if(action==='all')revealSolution();
+}
+
+/* ===== Ereignisse ===== */
 $('#pages').addEventListener('click',e=>{const a=e.target.closest('a[data-op]');if(a&&a.getAttribute('href')===location.hash)changePage()});window.addEventListener('hashchange',changePage);
-$('#regenerate').addEventListener('click',generate);
-['maximum','difficulty','terms','allow-rest'].forEach(id=>$('#'+id).addEventListener('change',generate));
-$('#tasks').addEventListener('input',e=>{let el=e.target.closest('[data-field]');if(!el)return;let t=state.tasks[0];t[el.dataset.field]=el.value;if(t.feedback){t.feedback=null;const status=el.closest('.task').querySelector('.feedback');if(status)status.remove()}});
-$('#tasks').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input.answer')){e.preventDefault();$('#tasks [data-action="check"]').click()}});
-$('#tasks').addEventListener('click',e=>{let btn=e.target.closest('button[data-action]');if(!btn)return;let t=state.tasks[0];if(btn.dataset.action==='toggle')t.show=!t.show;else{let value=parseValue(t.answer),remainder=String(t.restAnswer).trim()===''?0:parseValue(t.restAnswer);t.feedback=Number.isFinite(value)&&value===t.result&&(!('remainder' in t)||Number.isFinite(remainder)&&remainder===t.remainder)?'correct':'wrong'}render()});
-window.__rechenwerkstatt={addDetail,subDetail,multDetail,divDetail,additionLayout,subtractionLayout,multiplicationLayout,divisionLayout,generator,get state(){return state}};
+$('#regenerate').addEventListener('click',()=>generate());
+['maximum','difficulty','terms','allow-rest'].forEach(id=>$('#'+id).addEventListener('change',()=>generate()));
+$('#settings-close').addEventListener('click',()=>{$('#settings').open=false;$('#settings summary').focus()});
+document.addEventListener('click',e=>{const s=$('#settings');if(s.open&&!s.contains(e.target))s.open=false});
+document.addEventListener('keydown',e=>{const s=$('#settings');if(e.key==='Escape'&&s.open){s.open=false;s.querySelector('summary').focus()}});
+$('#task').addEventListener('submit',e=>{e.preventDefault();check()});
+$('#task').addEventListener('input',e=>{const el=e.target.closest('[data-field]');if(!el)return;const t=state.tasks[0];t[el.dataset.field]=el.value;if(t.feedback){t.feedback=null;t.detail=null;const fb=$('#task .feedback');if(fb)fb.remove();el.removeAttribute('aria-invalid')}});
+document.addEventListener('click',e=>{const btn=e.target.closest('[data-action]');if(!btn||btn.dataset.action==='check'||!btn.closest('#task, #margin'))return;act(btn.dataset.action,btn)});
+window.__rechenwerkstatt={addDetail,subDetail,multDetail,divDetail,additionLayout,subtractionLayout,multiplicationLayout,divisionLayout,getLayout,tipList,wrongDetail,generator,render,get state(){return state}};
+// iOS: Höhe der Bildschirmtastatur als --keyboard-inset, damit die Antwortleiste darüber sitzt.
+if(window.visualViewport){const vv=window.visualViewport,setInset=()=>document.documentElement.style.setProperty('--keyboard-inset',Math.max(0,Math.round(window.innerHeight-vv.height-vv.offsetTop))+'px');vv.addEventListener('resize',setInset);vv.addEventListener('scroll',setInset);setInset()}
 changePage();
 })();
 </script>
